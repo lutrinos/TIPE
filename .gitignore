@@ -1,4 +1,11 @@
+# Executable du code
+code/a.out
+
+# Ancien TIPE
 legacy/ressources/*
 legacy/data/*
 __pycache__
+
+# Configuration
 typst.toml
+.vscode

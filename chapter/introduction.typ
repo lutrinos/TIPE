@@ -243,6 +243,50 @@ Attention, cette propriété n'est pas vraie pour un hypergraphe partiel ! Si on
   Conséquence logique des deux propositions précédentes.
 ]
 
+== $k$-sections
+
+#definition(title: [$k$-section])[
+  Soit $k in NN^*$, la $k$-section de l'hypergraphe $H = (X, ee)$ est le couple formé par l'ensemble $X$ et la famille d'ensembles
+  $
+    ee_((k)) = { F | F subset X "tel que" abs(F) in bracket.l.double 1, k bracket.r.double "et" F subset E_i "pour" E_i in ee }
+  $
+
+  On note la $k$-section de $H$
+  $ H_((k)) = (X, ee_((k))) $
+]
+
+Considérons l'hypergraphe du plan de Fano, qu'on notera $F$.
+
+#figure(image("../images/fano.png", width: 160pt))
+
+Tout d'abord, $F_((k))$ n'existe pas pour $k > 3$. Ensuite $F_((3)) = F$ car toutes les arêtes de $F$ sont de cardinal 3. Enfin, $ee_((2))$ est la famille parcourant l'ensemble des parties à un ou deux éléments de $bracket.l.double 0, 6 bracket.r.double$ donc
+$ F_((2)) = ({0, 1, 2, 3, 4, 5, 6}, ee_((2))) $
+Et
+$ F_((1)) = ({0, 1, 2, 3, 4, 5, 6}, {0}, {1}, {2}, {3}, {4}, {5}, {6}) $
+
+#proposition[
+  Soit $H$ un hypergraphe de rang $r$, le $k$-section de $H$ est un hypergraphe de rang
+  $ r_((k)) = min(k, r) $
+]
+
+#proof[]
+
+#definition[
+  La 2-section $H_((2))$ de tout hypergraphe $H$ est un graphe possédant une boucle en chaque sommet.
+
+  On note $(H)_2$ cette 2-section amputée de ses boucles.
+]
+
+#proposition[
+  Soit $H$ un hypergraphe, $(H)_2$ possède les même sommets que $H$ et est un graphe simple.
+]
+
+#proof[]
+
+#question[
+  Quelles sont les propriétés portant sur ce graphe ?
+]
+
 == Propriétés sur les sommets
 
 Tout comme dans les graphes, on peut définir le degré d'un sommet d'un hypergraphe avec la notion d'étoile centrée en un sommet.
