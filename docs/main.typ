@@ -65,6 +65,20 @@ Pour ma part, j'ai utilisé le travail réalisé par kaikki.org#footnote[https:/
 
 == Origine du corpus
 
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  inset: 10pt,
+  align: horizon,
+  stroke: (1pt, black),
+  table.header(
+    [*Corpus*], [*Nombre de mots*], [*Date*], [*Remarques*],
+  ),
+  [Lefff], [451962], [2006], [Complet, de bonne qualité. Forme part d'Alexina, et une variante, le Leffe, existe pour l'espagnol.],
+  [Lexique 383], [125396], [Création en 2019 - mis à jour jusqu'à maintenant], [Relativement complet, d'excellente qualité],
+  [Wiktionnaire], [1859114], [Dump du 20 avril 2025], [Extrêmement complet, de très bonne qualité]
+)
+
+
 == Préparation du corpus
 Dans un premier temps, on doit avoir un moyen de vérifier qu'un mot est correctement orthographié de manière efficace. On remarque que dans le wiktionnaire, de nombreux symboles sont présents jusqu'à certains émojis.
 

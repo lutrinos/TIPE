@@ -306,7 +306,7 @@ class Trie:
         print(self._stats(self.root, 0))
     
     def _stats(self, node, _):
-        value = 1 if len(node.chars()) == 0 else 0
+        value = 1 if node.is_word() else 0
 
         for c in node.chars():
             value += self._stats(self.get_next(node, c), 0)

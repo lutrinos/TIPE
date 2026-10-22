@@ -4,7 +4,16 @@ import json
 from classes.converter import Converter
 import re
 
-convert = Converter("./data/mapping.csv")
-trie = Trie(convert, "./data/lefff.bin")
+from classes.network import Network
 
-trie.list()
+
+convert = Converter("./data/mapping.csv")
+trie = Trie(convert, "./data/wiki.bin")
+
+trie.stats()
+
+"""
+network = Network([2, 2])
+
+print(network.process([1, 1]))
+"""
