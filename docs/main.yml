@@ -1,6 +1,22 @@
 # Références bibliographiques
 # Source du format https://github.com/typst/hayagriva/blob/main/docs/file-format.md
+# Web app pour passer du  format BibTex au format hayagriva https://jonasloos.github.io/bibtex-to-hayagriva-webapp/
 
+# Algorithmie
+fayva1990:
+  type: thesis
+  title: Aide à la détection de fautes grammaticales par une analyse progressive des phrases
+  author: Fay-Varnier, Christine
+  date: 1990
+  page-range: 1
+  url: {
+    value: https://theses.fr/1990INPL012N,
+    date: 2025-04-03
+  }
+
+# Neural networks
+
+# Annexe
 cnrtl:
   type: reference
   title: Centre National  de Ressources Textuelles et Lexicales
