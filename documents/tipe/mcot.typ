@@ -6,16 +6,16 @@
 //#set text(size: 12pt)
 
 #maketitle(
-  title: "Calcul de requêtes acycliques conjonctive dans une base de données",
+  title: "Calcul de requêtes acycliques conjonctives dans une base de données",
   authors: ("Nathan TILLIER",),
   //date: "",
 )
 
 #set heading(numbering: none)
 
-Les bases de données sont capables de calculer un nombre impressionant de requêtes par secondes. Certaines requêtes sont extrêmement complexes, mais il s'avère qu'une partie d'entre elles appartient à une même catégorie, celle des requêtes acycliques conjonctives.  \
+Un élément crucial d'une infrastructure informatique est la base de donnée qu'elle interroge grâce à des requêtes. Certaines requêtes sont très complexes, mais il s'avère qu'une partie d'entre elles appartient à une même catégorie, celle des requêtes acycliques conjonctives.  \
 
-Ce sujet s'attache à étudier et implémenter entre autres l'algorithme de Yannakakis, permettant de manière assez étonnante de calculer ces requêtes en temps linéaire. Cet algorithme repose sur le fait que leurs variables ne créent pas de cycle dans l'hypergraphe associé, et s'inscrit donc pleinement dans le thème de l'année.
+Ce sujet s'attache à étudier et implémenter entre autres l'algorithme de Yannakakis, permettant de calculer ces requêtes en temps linéaire. Cet algorithme repose sur le fait que leurs variables ne créent pas de cycle dans l'hypergraphe associé, et s'inscrit donc pleinement dans le thème de l'année.
 
 
 = Positionnement thématique
@@ -31,6 +31,7 @@ Ce sujet s'attache à étudier et implémenter entre autres l'algorithme de Yann
     Base de données \
     Hypergraphe \
     Acyclicité dans les hypergraphes \
+    Algorithmique
   ],
   [
     *Mots-clés* (en anglais) \
@@ -38,21 +39,22 @@ Ce sujet s'attache à étudier et implémenter entre autres l'algorithme de Yann
     Database \
     Hypergraph \
     Acyclicity in hypergraphs \
+    Algorithmics
   ],
 )
 
 = Bibliographie commentée
-Un élément crucial d'une infrastructure informatique est la base de donnée sur laquelle des requêtes sont effectuées : celle-ci doit donc répondre à des impératifs, notamment d'efficacité. Certaines requêtes sont extrêmement complexes, mais il s'avère qu'une bonne partie d'entre elles appartient à une même catégorie, celle des requêtes acycliques conjonctives. \
-Il s'agit par exemple des jointures (`JOIN ON` en SQL), ce qui revient à calculer une partie d'un produit cartésien.
+Les bases de données doivent être en capacité de répondre à un nombre important de requêtes par secondes : elles doivent donc être très efficaces lors de leurs calculs. Une bonne partie de ces requêtes appartient à une même catégorie, qu'on appelle requêtes acycliques conjonctives, parmi lesquelles on retrouve les jointures (par exemple `JOIN ON` en SQL) permettant d'effectuer des recherches mélangeant plusieurs tables. De manière plus générale, de nombreuses requêtes permettant de relier plusieurs tables de données entre elles lors de la recherche sont acycliques conjonctives.
 
 #linebreak()
 
-La fondation théorique des bases de données est l'algèbre relationnelle, une théorie introduite par Edgar F. Codd en 1970 @codd. Dans cette dernière, une requête conjonctive est constituée d'un en-tête introduisant les variables utilisées qu'on souhaite récupérer, ainsi que d'une conjonction de conditions portant sur ces variables. On peut prouver que calculer ce type de requête est NP-difficile @lecture2019bis, et on a donc cherché à déterminer un algorithme légèrement plus restrictif déterminant le résultat d'une telle requête en temps polynomial, voire linéaire. Or il s'avère que certaines requêtes conjonctives, dites acycliques, sont calculables en temps linéaire grâce à l'algorithme éponyme de Yannakakis @yannakakis1981. L'intérêt de cette restriction sur l'acyclicité est notamment qu'elle est peu restrictive dans la pratique tout en restant assez générale.
+La fondation théorique des bases de données est l'algèbre relationnelle, une théorie introduite par Edgar F. Codd en 1970 @codd. Dans cette dernière, une requête conjonctive est constituée de deux parties : l'en-tête où on indique les valeurs qu'on souhaite obtenir, et le corps de la requête qui explicite les conditions portant sur ces valeurs. Par exemple, si on cherche à déterminer l'ensemble des noms des communes françaises avec le nom du département associé, on liste dans l'en-tête les variables désignant le nom de la commune et celui du département, puis le corps de la requête contiendra la condition associée : il faut que l'identifiant du département corresponde à l'identifiant du département de la commune. \
+On peut prouver que calculer ce type de requête est NP-difficile @lecture2019bis, et on a donc cherché à déterminer un algorithme légèrement plus restrictif déterminant le résultat d'une telle requête en temps polynomial, voire linéaire. Or il s'avère que certaines requêtes conjonctives, dites acycliques, sont calculables en temps linéaire grâce à l'algorithme de Yannakakis @yannakakis1981. L'intérêt de cette restriction est qu'elle s'applique dans la pratique à un grand nombre des requêtes effectuées.
 
 #linebreak()
 
-Cet algorithme repose en partie sur l'introduction d'un hypergraphe associé à une requête. Les hypergraphes sont essentiellement une généralisation des graphes introduite par Claude Berge @berge1970, dans laquelle une arête peut relier plusieurs sommets. \
-Ce point de vue différent, liant théorie des hypergraphes et algèbre relationnelle, permet ainsi de construire  un arbre nommé arbre de jointure, à partie duquel on peut construire le résultat en trois parcours : deux de précalcul, et un pour récupérer le résultat @waterloo.
+Cet algorithme repose sur l'introduction d'un hypergraphe associé à une requête. Les hypergraphes sont essentiellement une généralisation des graphes introduite par Claude Berge @berge1970, dans laquelle une arête peut relier plusieurs sommets. \
+Ce point de vue différent, liant théorie des hypergraphes et algèbre relationnelle, permet de construire un arbre nommé arbre de jointure, à partie duquel on peut construire le résultat en trois parcours : deux de pré-calcul en partant des feuilles jusqu'à la racine de l'arbre puis de la racine de l'arbre jusqu'aux feuilles, et un dernier pour récupérer le résultat @waterloo.
 
 #linebreak()
 
@@ -61,6 +63,8 @@ Toutefois, à cause de ces trois parcours différents de l'arbre de jointure, la
 
 = Problématique retenue
 Je propose une implémentation d'une base de donnée capable d'exécuter des requêtes acycliques conjonctives en temps linéaire en la taille de l'entrée et de la sortie.
+
+Comment peut-on exécuter des requêtes en temps linéaire sur une base de données ?
 
 = Objectifs du TIPE
 Il s'agira dans un premier temps d'étudier les cas d'usage et la formalisation de ce type de requêtes en algèbre relationnelle, puis les algorithmes utilisés pour
