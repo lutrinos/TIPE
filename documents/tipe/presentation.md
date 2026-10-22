@@ -59,7 +59,32 @@ CREATE TABLE commune (
 |3|69|Lyon|
 
 </div><div class="gtop">
+
+Une base de données est un ensemble de relations (tables). Le coût majeur des requêtes provient de l'opération de **jointure**.
+
 </div>
+
+
+
+
+
+---
+# Jointure et approche naïve
+
+On fait un produit cartésien. **Problème :** Explosion combinatoire de la taille intermédiaire.
+
+<!-- Vide pour alléger. Numéros à côté pour voir la correspondance -->
+|commune.id|commune.nom|commune.departement|departement.id|departement.nom|
+|-|-|-|-|-|
+|1|Paris|75|75|Île-de-France|
+||||29|Finistère|
+||||80|Somme|
+|2|Brest|29|75|Île-de-France|
+||||29|Finistère|
+||||80|Somme|
+|3|Lyon|69|75|Île-de-France|
+||||29|Finistère|
+||||80|Somme|
 
 
 
@@ -119,29 +144,6 @@ JOIN region AS r ON d.region = r.id AND c.region = r.id
 # Algorithme de Yannakakis
 
 
-
-
-
-
-
-
----
-# Algorithme naïf
-
-On fait un produit cartésien.
-
-<!-- Vide pour alléger. Numéros à côté pour voir la correspondance -->
-|commune.id|commune.nom|commune.departement|departement.id|departement.nom|
-|-|-|-|-|-|
-|1|Paris|75|75|Île-de-France|
-||||29|Finistère|
-||||80|Somme|
-|2|Brest|29|75|Île-de-France|
-||||29|Finistère|
-||||80|Somme|
-|3|Lyon|69|75|Île-de-France|
-||||29|Finistère|
-||||80|Somme|
 
 
 
@@ -328,7 +330,7 @@ Query(
 
 
 ---
-# Exemple de requête
+# Exemples de requête
 
 **Commune, département, région**
 ```sql
@@ -357,12 +359,8 @@ JOIN commune as cheflieu ON commune.numero = departement.cheflieu
 # Statistiques
 
 <center>
-    <img height="400px" src="./images/stats_1.png" />
+    <img height="400px" src="./images/stats_join_count.png" />
 </center>
-
-Temps d'exécution de la requête (seconde) selon la taille de la base de donnée et du résultat.
-
-(Bleu: requête 1, Rouge : requête 2, Vert : requête 3)
 
 
 
@@ -375,7 +373,7 @@ Temps d'exécution de la requête (seconde) selon la taille de la base de donné
 <div class="glft">
 
 <center>
-    <img src="./images/stats_3.png"/>
+    <img src="./images/stats_2.png"/>
 
     Implémentation Python
 </center>
@@ -391,7 +389,7 @@ Temps d'exécution de la requête (seconde) selon la taille de la base de donné
 
 </div><div class="gtop">
 
-Temps d'exécution de la requête (seconde) selon la taille de la base de donnée et du résultat.
+Temps d'exécution de la requête (seconde) selon la taille de la base de donnée.
 
 </div>
 
@@ -426,6 +424,18 @@ Temps d'exécution de la requête (seconde) selon la taille de la base de donné
 
 
 
+
+---
+# Sommaire de l'annexe
+- Statistiques selon le mode de puissance de l'ordinateur
+- Statistiques avec la réécriture en C
+- Statistiques avec plus de résultats finaux
+- Hypergraphe d'une requête
+- Arbre de jointure d'une requête
+- Réduction GYO et construction de l'arbre de jointure
+- Éléments de preuve (Yannakakis et GYO)
+- NP-complétude du calcul de requêtes
+
 ---
 <!-- _class: grid-tlr -->
 # Statistiques (bis)
@@ -455,6 +465,17 @@ Temps d'exécution de la requête (seconde) selon la taille de la base de donné
 
 
 
+---
+# Statistiques
+
+<center>
+    <img height="400px" src="./images/stats_join_count_big.png" />
+</center>
+
+Courbes avec beaucoup plus de résultats finaux (d = 0.8)
+
+
+
 
 
 ---
@@ -474,6 +495,185 @@ Temps d'exécution de la requête (seconde) selon la taille de la base de donné
 
 
 
+
+---
+# Hypergraphe d'une requête
+
+**Définition**
+$$ q(x_1, ..., x_n) :- R_1(\vec{y_1}), ..., R_p  (\vec{y_p}) $$
+
+- $V = \{x_1, ..., x_n\}$
+- les arêtes sont les variables apparaissant dans chacune des clauses atomiques
+
+$$ E_i = V \cap \text{var}(\vec{y_i}) $$
+
+**Exemple**
+$$ q(v_0, v_1, v_2, v_3, v_4)  :- R_\text{vert} (v_0, v_1), R_\text{rouge} (v_1, v_2, v_3), R_\text{jaune} (v_3, v_4) $$
+
+<center>
+    <img src="./images/hypergraphe.png" />
+</center>
+
+---
+<!-- _class: grid-tlr -->
+# Arbres de jointure
+
+<div class="glft">
+
+<center>
+    <img src="./images/hypergraphe.png" />
+</center>
+
+</div><div class="grgt">
+
+<center>
+    <img src="./images/hypergraph-jointure.png" />
+</center>
+
+</div><div class="gtop">
+
+**Définition**
+Soit $H$ un hypergraphe sur $X$, et $T$ un graphe ayant pour sommet les arêtes de $H$.
+$T$ est un arbre de jointure si
+- pour tout sommet $v$ de $H$, le sous-graphe de $T$ engendré par l'ensemble des sommets de $T$ contenant $v$ est connexe
+- $T$ est un arbre
+
+
+Un tel hypergraphe est dit $\alpha$-acyclique.
+
+</div>
+
+---
+# Arbres  de jointure
+
+![Arbre de jointure](./images/jointure.png)
+
+
+
+---
+<!-- _class: grid-tlr -->
+# Réduction Graham-Yu-Ozsoyoglu
+
+<div class="glft">
+
+Pour déterminer si un hypergraphe est $\alpha$-acyclique.
+
+**Entrée :** hypergraphe $H$
+**Sortie :** booléen indiquant si $H$ est acyclique
+
+- **Tant que** $H$ a une oreille **faire**
+    - $e$ oreille de $H$
+    - retirer tous les sommets exclusivement dans $e$
+    - retirer $e$
+- **Fin**
+- **Renvoyer** $H$ est l'hypergraphe vide
+
+</div><div class="grgt">
+
+```py
+def est_acyclique(self):
+    h = self.copier()
+    restant = set(range(h.ordre))
+    sommets_compte = [h.decompte(s) for s in range(h.ordre)]
+
+    while True:
+        sortir = True
+
+        # On enlève tous les sommets isolés
+        for s in restant:
+            if sommets_compte[s] <= 1:
+                restant.discard(s)
+                h.retirer_sommet(s)
+                sortir = False
+        
+        # On enlève toutes les arêtes inclues dans d'autre
+        for indice, a in enumerate(h.aretes):
+            for b in h.aretes:
+                if a.dans(b) and a.indice != b.indice:
+                    for s in a.sommets:
+                        sommets_compte[s] -= 1
+                    h.enlever_arete(indice)
+                    sortir = False
+                    break
+        
+        # On continue éventuellement l'algorithme
+        if sortir or len(restant) == 0:
+            break
+
+    return len(restant) == 0
+```
+
+</div><div class="gtop">
+
+</div>
+
+
+
+
+
+---
+<!-- _class: grid-tlr -->
+# Construction de l'arbre de jointure
+
+<div class="glft">
+
+Il suffit de reprendre l'algorithme précédent, en rajoutant des arêtes dans l'arbre au fur et à mesure que des sommets de l'hypergraphe sont retirés.
+
+</div><div class="grgt">
+
+```py
+def est_acyclique(self):
+    arbre = [[] for _ in range(self.nb_aretes)]
+
+    # [...]
+
+    while True:
+        # [...]
+        
+        # On enlève toutes les arêtes inclues 
+        for indice, a in enumerate(h.aretes):
+            for b in h.aretes:
+                if a.dans(b) and a.indice != b.indice:
+                    arbre[a.indice].append(b.indice)
+                    arbre[b.indice].append(a.indice)
+                    # [...]
+        
+        # [...]
+
+    return arbre if len(restant) == 0 else None
+```
+
+</div><div class="gtop">
+
+</div>
+
+
+
+---
+# Réduction GYO
+**Éléments de preuve (correction)**
+- dès qu'on retire un sommet isolé, on ne perd aucune information sur $T$ arbre de jointure. On retire d'ailleurs son arête avec si elle ne contient que lui.
+- si une arête $E$ est incluse dans une autre arête $F$, alors les sommets $E$ et $F$ sont nécessairement reliés dans $T$ (on crée la connexité sans briser l'acyclicité).
+- si une de ces étapes n'est pas faisable et que l'hypergraphe n'est pas vide, on ne  peut pas contruire $T$ : on créera forcément un cycle.
+
+**Éléments de preuve (complexité)**
+- Enlever les sommets isolés : $O(|X|)$
+- Enlever les arêtes : $O(|H|^2 |X|)$
+- Boucle _while_: au plus $|X| + |H|$ itérations (on retire à chaque fois au moins un sommet ou une arête)
+
+
+
+
+
+---
+# Algorithme de Yannakakis
+**Éléments de preuve (correction)**
+- Lors des projections successives on ne perd aucune information (locale et globale) nécessaire à la construction du résultat souhaité.
+
+**Éléments de preuve (complexité)**
+- Afin d'obtenir la complexité souhaitée, on montre qu'aucun résultat intermédiaire ne peut être plus grand qu'un polynôme en la taille de l'entrée et de la sortie. On considère un noeud $R_i$ avec pour enfants $S_1, ..., S_n$ dans un arbre de jointure correspondant à une requête.
+- Cet noeud $R_i$ (noeud dans l'arbre de jointure) sera remplacé par un noeud $R_i^J = \pi_{Y \cup Z} (T)$ où $Y = \text{vars}(R_i)$ et $Z = \text{head}(q) \setminus Y$ et $T = R_i \bowtie S_1 \bowtie ... \bowtie S_n$
+- Puisque $Y$ et $Z$ sont disjoints, $\pi_{Y\sqcup Z}(T) \subseteq \pi_Y (T) \times \pi_Z (T)$. On remarque que $\pi_Y (T)$ est de taille bornée par celle de $R_i$, et que $\pi_Z (T)$ l'est par la taille de la sortie (car l'exploration se fait dans l'ordre postfixe, donc on a déjà réduit les _dangling tuples_).
 
 
 
@@ -504,4 +704,10 @@ Temps d'exécution de la requête (seconde) selon la taille de la base de donné
 ---
 # Sources
 
-- À faire
+- CODD E. F. : A relational model of data for large shared data banks. : https://doi.org/10.1145/362384.362685
+- KOUTRIS P. : Foundations of Data Management : Acyclic Conjunctive Queries : https://pages.cs.wisc.edu/~paris/cs784-f19/lectures/lecture2.pdf
+- YANNAKAKIS M. : Algorithms for Acyclic Database Schemes : Proceedings of the Seventh International Conference on Very Large Data Bases - Volume 7, (1981)
+- BERGE C. : Graphes et hypergraphes : Graphes et hypergraphes Dunod (1970)
+- HU X. : Algorithmic Aspects of Query Processing - Traditional Query Processing : https://cs.uwaterloo.ca/~xiaohu/courses/CS848/CS848-F25-03-Yannakakis-part2.pdf
+- LUO Z., BROECK W. V. DEN, BROECK G. V. DEN, WANG Y. R. : Algorithms for Optimizing Acyclic Queries : https://arxiv.org/abs/2509.14144
+- WOLFGANG GATTERBAUER : Toward Responsive DBMS : Part 3 Acyclic Queries &  Enumeration : https://www.youtube.com/watch?v=toi7ysuyRkw

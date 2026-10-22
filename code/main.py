@@ -44,41 +44,39 @@ class JoinNode:
     
     # Semi-jointure
     def semi_join(self, node: Self):
-        intersection = list(self.variables.intersection(node.variables))
-        
-        index = set([
+        intersection = sorted(self.variables.intersection(node.variables))
+
+        index = set(
             tuple(row[node.record[v]] for v in intersection) for row in node.table.rows
-        ])
+        )
 
         self.table.project(
             [v in self.variables for v in self.table.columns],
             lambda row: tuple(row[self.record[v]] for v in intersection) in index
         )
 
-        # Mise à jour des colonnes
-        for i, v in enumerate(self.table.columns):
-            self.record[v] = i
+        # Mise à jour des colonnes (ne garder que les variables, pas les "_")
+        self.record = {v: i for i, v in enumerate(self.table.columns) if v != '_'}
     
     def patch_rows(self, row_a, row_b, selection: list[tuple[bool, int]]):
         return tuple(row_a[i] if a else row_b[i] for a, i in selection)
     
     # Jointure complète
     def full_join(self, node: Self, head: Head, strict):
-        intersection = list(self.variables.intersection(node.variables))
-        index  = defaultdict(list)
+        intersection = sorted(self.variables.intersection(node.variables))
+        index = defaultdict(list)
 
         # Construction de la sélection
         selection = []
         columns = []
-        for v in head.variables if strict else self.variables.union(node.variables):
+        vars_iter = head.variables if strict else sorted(self.variables.union(node.variables))
+        for v in vars_iter:
             if v in self.variables or v in node.variables:
                 current = v in self.variables
                 columns.append(v)
-                selection.append(
-                    (current, self.record[v] if current else node.record[v])
-                )
+                selection.append((current, self.record[v] if current else node.record[v]))
             else:
-                raise InterruptedError(v + " non présent lors de la jointure.")
+                raise ValueError(f"Variable {v} non présente lors de la jointure.")
 
         # Construction du résultat
         for row in node.table.rows:
@@ -95,11 +93,21 @@ class JoinNode:
         
         self.table.rows = result
         self.table.columns = columns
-        self.record = { v:i for i, v in enumerate(columns) }
-        self.variables = set(head.variables) if strict else self.variables.union(node.variables)
+        self.record = {v: i for i, v in enumerate(columns)}
+        self.variables = set(head.variables) if strict else set(self.variables.union(node.variables))
 
     
     def compute(self, head: Head):
+        # Cas d'une racine sans enfants (ou requête à un seul atome)
+        if self.root and not self.children:
+            self.table.project(
+                [v in head.variables for v in self.table.columns],
+                lambda row: True
+            )
+            self.record = { v:i for i, v in enumerate(self.table.columns) }
+            self.variables = set(head.variables)
+            return
+
         for index, child in enumerate(self.children):
             child.compute(head)
             self.full_join(child, head, self.root and index == len(self.children) - 1)
@@ -143,7 +151,7 @@ class Instance:
         arbre = hyper.arbre_jointure()
 
         if not arbre:
-            raise InterruptedError("Requête non cyclique.")
+            raise ValueError("La requête est cyclique (non supporté par l'algorithme de Yannakakis).")
 
         #arbre_bis = dict()
 
@@ -154,21 +162,23 @@ class Instance:
         return self.join_dfs(arbre, query, vus, 0)
 
     # Passage bottom -> up
+    # Passage bottom -> up (Remontée des contraintes vers la racine)
     def bottom_up(self, query: Query, node: JoinNode):
         for child in node.children:
             self.bottom_up(query, child)
 
             variables = node.variables.intersection(child.variables)
             if len(variables) > 0:
-                child.semi_join(node)
+                node.semi_join(child) # Élimination des tuples du parent sans correspondance (bottom-up)
 
     # Passage top -> down
+    # Passage top -> down (Propagation des contraintes vers les feuilles)
     def top_down(self, query: Query, node: JoinNode):
         for child in node.children:
             variables = node.variables.intersection(child.variables)
 
             if len(variables) > 0:
-                node.semi_join(child)
+                child.semi_join(node) # Propagation de la réduction vers les feuilles (top-down)
             self.top_down(query, child)
 
     # Réalisation d'une requête
@@ -176,10 +186,10 @@ class Instance:
         # Vérification de la requête
         for atom in query.atoms:
             if atom.name not in self.tables:
-                raise InterruptedError(atom.name + " non présent dans les tables.")
+                raise ValueError(f"Table '{atom.name}' non présente dans l'instance.")
             if len(atom.original) != len(self.tables[atom.name].columns):
-                raise InterruptedError(
-                    "Nombre de colonnes non correspondant dans la table " + atom.name
+                raise ValueError(
+                    f"Nombre de colonnes incorrect pour l'atome {atom.name}"
                 )
 
         # Création de l'arbre de jointure
@@ -197,4 +207,3 @@ class Instance:
         jointree.compute(query.head)
 
         return jointree.table
-
