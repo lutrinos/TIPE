@@ -1,3 +1,9 @@
+# 5 avril 2025
+- Découverte du Lefff
+- Création d'une structure de trie pour stocker tous les mots du dictionnaire
+- Découverte de http://www.lexique.org/ avec des bases de donnée de mots français
+- Obtention de diverses bases de donnée, mettant en jeux d'importants corpus, avec les conjugaisons des verbes, des noms propres, des fréquences d'utilisations
+
 # 4 avril 2025
 - Découverte de LanguageTool et Hunspell
 - Lecture rapide de leurs code source

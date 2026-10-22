@@ -49,8 +49,32 @@ La *détection d'un maximum d'erreur*. Repérer hypothétiquement toutes les err
 
 La *suggestion de reformulations*. Un phrase peut-être grammaticalement et syntaxiquement correcte quand bien-même elle est alambiquée, interminable voire incompréhensible. Ce critère s'appliquera exclusivement au modèle neuronal proposé.
 
+
+
+
+
+#pagebreak()
+= Obtention et préparation des données
+Il est dans un premier temps nécessaire d'avoir accéder à un corpus suffisament important de mots.
+
+
+
+
+
+
 #pagebreak()
 = Approche algorithmique
+
+
+
+
+
+
+
+
+
+
+
 
 #pagebreak()
 = Utilisation d'un réseau de neurones
