@@ -6,11 +6,13 @@ from classes.converter import Converter
 convert = Converter("./data/mapping.csv")
 builder =  TrieBuilder(convert, "./data/wiki.bin")
 
+path = "/run/media/nathan/UEBOAT/Wiki/kaikki.org-dictionary-Français.jsonl"
+
 # Lecture
 m = monitor("Lecture")
 
 i = 0
-with open("/run/media/nathan/UEBOAT/Wiki/kaikki.org-dictionary-Français.jsonl", "r") as f:
+with open(path, "r") as f:
     while ligne := f.readline():
         i += 1
         objet = json.loads(ligne)
@@ -21,6 +23,6 @@ m()
 
 # Sauvegarde
 m = monitor("Sauvegarde")
-builder.build("./test.bin")
+builder.build()
 m()
 

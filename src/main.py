@@ -7,6 +7,8 @@ import re
 convert = Converter("./data/mapping.csv")
 trie = Trie(convert, "./data/wiki.bin")
 
-print(
-    trie.correct("caucisse")
-)
+#trie.list()
+print(trie.check("chocolat"))
+#print(trie.check("dog"))
+#print(trie.check("lire"))
+#print(trie.correct("lira"))

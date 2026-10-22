@@ -115,7 +115,7 @@ La nouvelle implémentation en binaire avec mmap, se charge instantanément et o
 
 Concernant les performances, il lit, corrige et affiche L'Avare de Molière en 1.5s (26828 mots) et corrige le tout en 1.25s.
 
-C'est moins performant que le système précédent pour 100 mots (0.005s vs 0.0002s) soit à peu près 20x plus lent, mais tout à fait acceptable
+C'est moins rapide que le système précédent (0.005s vs 0.0002s pour 100 mots et 0.15s vs 2.2s pour L'Avare) soit à peu près 20x plus lent, mais tout à fait acceptable.
 
 On obtient un résultat assez intéressant même si il est perfectible : 
 #figure(
@@ -145,6 +145,8 @@ Puis on peut implémenter assez rapidement un algorithme de correction avec la d
   image("ex_3.png", width: 400pt),
   caption: [Correction et suggestions]
 )
+
+L'amélioration de la nouvelle structure, avec la fusion des noeuds simples (pour former des noeuds longs) permet de réduire l'espace nécessaire en passant de 32 Mo à 23 Mo, ainsi que les performances (0.7s pour L'Avare), grâce à mémoization de la racine également, temps qui passe à 0.4s si l'on mémoize le premier niveau de la trie (0.3s si on se passe d'afficher le texte dans le terminal). Cela fait 26828 mots en 0.3s, soit à peu près 90000 mots/seconde, ce qui est tout à fait respectable.
 
 #pagebreak()
 = Utilisation d'un réseau de neurones
