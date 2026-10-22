@@ -1,0 +1,23 @@
+# Références bibliographiques
+# Source du format https://github.com/typst/hayagriva/blob/main/docs/file-format.md
+
+cnrtl:
+  type: reference
+  title: Centre National  de Ressources Textuelles et Lexicales
+  url: {
+    value: https://www.cnrtl.fr/,
+    date: 2025-04-02
+  }
+
+la-faute-de-l-orthographe:
+  type: video
+  title: La faute de l'orthographe
+  date: 2019
+  genre: TEDx Talk
+  author:
+    - Arnaud Hoedt
+    - Jérôme Piron
+  url: {
+    value: https://www.youtube.com/watch?v=5YO7Vg1ByA8,
+    date: 2025-04-02
+  }
