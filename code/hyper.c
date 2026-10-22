@@ -1,10 +1,17 @@
 /**
  * Tout a été codé et commenté à la main ;)
+ * Pour l'implémentation optimisée, on peut supposer qu'il y a au plus 64 noeuds, ce qui nous permet de :
+ *  - faire l'union / intersection de deux arêtes en O(1)
+ *  - vérifier l'appartenance d'une arête à un sommet en O(1)
+ *  - ajouter / retirer un sommet d'une arête
  */
+
 
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+
+typedef __uint64_t nb;
 
 /**
  * Structure : arete

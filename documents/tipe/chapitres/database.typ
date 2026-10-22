@@ -24,11 +24,11 @@ Dans le cadre de l'application aux bases de données la notion d'arbre de jointu
 On s'intéresse tout d'abord à la manière dont on va contruire l'hypergraphe, à partir d'une requête  conjonctive.
 
 #definition(title: "Hypergraphe d'une requête")[
-	Soit une requête acyclique $q$.
-	$ q(x_1, ..., x_n) :- R_1(arrow(y_1)),...,R_p (arrow(y_p)) $
-	On pose l'hypergraphe $H(q) = (V, E)$ associé à $q$ de la façon suivante :
-	- l'ensemble des sommets $V$ contient toutes les variables du corps de $q$
-	- l'ensemble des arêtes $E$ contient, pour chaque clause atomique de la requête, l'ensemble des variables apparaissant dedans.
+  Soit une requête acyclique $q$.
+  $ q(x_1, ..., x_n) :- R_1(arrow(y_1)),...,R_p (arrow(y_p)) $
+  On pose l'hypergraphe $H(q) = (V, E)$ associé à $q$ de la façon suivante :
+  - l'ensemble des sommets $V$ contient toutes les variables du corps de $q$
+  - l'ensemble des arêtes $E$ contient, pour chaque clause atomique de la requête, l'ensemble des variables apparaissant dedans.
 ]
 
 On cherche ensuite un cas dans lequel la requête est plus  simple à utiliser (_i.e._ avec moins de conditions contraignantes). Une manière est de cherche un arbre de jointure sur cet hypergraphe.
@@ -54,15 +54,15 @@ Cette définition d'$alpha$-acyclicité ne va pas de soi...mais ce n'est pas là
 On utilise alors, de manière similaire à la théorie des graphes, le vocable de forêt.
 
 #definition(title: "Forêt de jointure")[
-	Un forêtde jointure d'une requête conjonctive est une forêt $F = (V, E)$ dont tous les sommets sont des clauses atomiques de $q$ et tel que pour chaque paire de clauses atomiques $R$ et $S$ ayant des variables en commun, les condition suivantes soient vérifiées :
-	- $R$ et $S$ appartiennent à la même composante connexe.
-	- toutes les variables communes à $R$ et $S$ sont présentes  sur un unique chemin de $R$ à $S$.
+  Un forêtde jointure d'une requête conjonctive est une forêt $F = (V, E)$ dont tous les sommets sont des clauses atomiques de $q$ et tel que pour chaque paire de clauses atomiques $R$ et $S$ ayant des variables en commun, les condition suivantes soient vérifiées :
+  - $R$ et $S$ appartiennent à la même composante connexe.
+  - toutes les variables communes à $R$ et $S$ sont présentes  sur un unique chemin de $R$ à $S$.
 
-	On appelle $F$ arbre de jointure si c'est un arbre.
+  On appelle $F$ arbre de jointure si c'est un arbre.
 ]
 
 #proposition[
-	Une requête conjonctive est acyclique si et seulement si elle possède une forêt de jointure.
+  Une requête conjonctive est acyclique si et seulement si elle possède une forêt de jointure.
 ]
 
 == Réduction Graham-Yu-Ozsoyoglu
@@ -127,8 +127,10 @@ L'idée est la suivante :
 - si une arête $E$ est incluse dans une autre arête $F$, alors les sommets $E$ et $F$ sont nécessairement reliés dans $T$ (on crée la connexité sans briser l'acyclicité).
 - si une de ces étapes n'est pas faisable et que l'hypergraphe n'est pas vide, on ne  peut pas contruire $T$ : on créera forcément un cycle.
 
+Et alors, quelle utilité lors de requêtes ? Une fois l'arbre de jointure enraciné, les informations se propageant par les arêtes, des feuilles aux parents successifs, contiennent toute l'information nécessaire pour réaliser la requête !
+
 #reminder[
-  Faire la complexité théorique, avec l'implémentation sous-jacente.
+  Réfléchir aux requêtes triangulaires, et à ce qui coince ensuite pour les requêtes cycliques.
 ]
 
 /*
@@ -165,3 +167,42 @@ Cet algorithme est expliqué dans @lecture2019, la thèse @duris2009 cite égale
 À faire :
 - présenter l'algorithme, expliquer pourquoi il fonctionne (préparer des éléments de preuve)
 - simuler "à la main" l'exécution d'une requête ?
+#code(title: "Yannakakis")[
+  - *Entrée : * une requête conjonctive $q$, une instance $I$
+  - *Sortie : * $q(I)$
+  - $$
+  - $J <-$ instance consistante issue de $I$
+  - $T <-$ arbre de jointure de $q$ avec une racine choisie arbitrairement
+  - $R_1, ..., R_n <-$ parcours postfixe de $T$
+  - *Pour* $i = 1, ..., n$ *faire*
+    - $S_1, ..., S_k$ enfants de $R_i$ dans $T$
+    - *Pour* $j = 1, ..., k$ *faire*
+      - $R_i^J <- pi_("vars"(R_i) union "head"(q)) (R_i^J join S_j^J)$
+    - *Fin*
+  - *Fin*
+  #h(1fr)
+]
+
+
+L'idée derrière est d'élaguer au plus tôt les résultats intermédiaires, qui ne seront pas tous pertinents ultérieurement, afin que les résultats intermédiaires de la jointure .
+
+L'idée derrière l'algorithme est que si on a une variable $x$ apparaissant dans un noeud et non dans son parent de l'arbre de jointure, celle-ci n'apparaît dans aucun des ancêtres.
+
+```
+To show that we obtain the desired complexity, we will prove that no intermediate result can grow
+more than a polynomial in the size of the input and output. Consider some node with atom R and
+children S1, . . . , Sn. Then the algorithm will replace this node with a new node T′ = πY∪Z(T),
+where T = R ./ S1 ./ . . . Sn, Y are the variables in R, and Z are the variables in head(q) \ Y. Since
+Y, Z are disjoint, πY∪Z (T) ⊆ πY (T) × πZ (T). Now notice that πY (T) is at most the size of R. Also,
+πZ (T) is bounded by the size of the output (but only because we took care of dangling tuples by
+applying the full reducer).
+```
+
+
+#theorem(title: "Complexité temporelle")[
+  L'algorithme de Yannakakis évalue une requête conjonctive acyclique en un temps polynomial par rapport à la taille de la requête, l'entrée et la sortie.
+
+  En pratique, si $I$ est une instance de taille $N$, alors
+  - si $q$ est une requête booléenne, la requête est évaluée en $O(N)$.
+  - si $q$ _is full_, la requête est évaluée en $O(N + "SORTIE")$ ou $"SORTIE"$ est la taille de la sortie.
+]

@@ -243,13 +243,60 @@ $$ \text{departement}(\text{numero}: \text{entier}, \text{ nom}:\text{texte}, \t
 $$  q_1(c, d, r) :- \text{commune}(c, x),\text{departement}(x, d, r) $$
 
 
+
+
+
 ---
-# Arbres de jointure
+# Hypergraphe d'une requête
 
 **Définition**
-Lorem ipsum dolor sit amet.
+$$ q(x_1, ..., x_n) :- R_1(\vec{y_1}), ..., R_p  (\vec{y_p}) $$
+
+- $V = \{x_1, ..., x_n\}$
+- les arêtes sont les variables apparaissant dans chacune des clauses atomiques
+
+$$ E_i = V \cap \text{var}(\vec{y_i}) $$
+
+**Exemple**
+$$ q(v_0, v_1, v_2, v_3, v_4)  :- R_\text{vert} (v_0, v_1), R_\text{rouge} (v_1, v_2, v_3), R_\text{jaune} (v_3, v_4) $$
+
+<center>
+    <img src="./images/hypergraphe.png" />
+</center>
+
+---
+<!-- _class: grid-tlr -->
+# Arbres de jointure
+
+<div class="glft">
+
+<center>
+    <img src="./images/hypergraphe.png" />
+</center>
+
+</div><div class="grgt">
+
+<center>
+    <img src="./images/hypergraph-jointure.png" />
+</center>
+
+</div><div class="gtop">
+
+**Définition**
+Soit $H$ un hypergraphe sur $X$, et $T$ un graphe ayant pour sommet les arêtes de $H$.
+$T$ est un arbre de jointure si
+- pour tout sommet $v$ de $H$, le sous-graphe de $T$ engendré par l'ensemble des sommets de $T$ contenant $v$ est connexe
+- $T$ est un arbre
 
 
+Un tel hypergraphe est dit $\alpha$-acyclique.
+
+</div>
+
+---
+# Arbres  de jointure
+
+![Arbre de jointure](./images/jointure.png)
 
 ---
 <!-- _class: chapter -->
@@ -260,15 +307,135 @@ Lorem ipsum dolor sit amet.
 
 
 ---
+<!-- _class: grid-tlr -->
 # Réduction Graham-Yu-Ozsoyoglu
+
+<div class="glft">
+
+Pour déterminer si unhypergraphe est $\alpha$-acyclique.
+
+**Entrée :** hypergraphe $H$
+**Sortie :** booléen indiquant si $H$ est acyclique
+
+- **Tant que** $H$ a une oreille **faire**
+    - $e$ oreille de $H$
+    - retirer tous les sommets exclusivement dans $e$
+    - retirer $e$
+- **Fin**
+- **Renvoyer** $H$ est l'hypergraphe vide
+
+</div><div class="grgt">
+
+```py
+def est_acyclique(self):
+    h = self.copier()
+    restant = set(range(h.ordre))
+    sommets_compte = [h.decompte(s) for s in range(h.ordre)]
+
+    while True:
+        sortir = True
+
+        # On enlève tous les sommets isolés
+        for s in restant:
+            if sommets_compte[s] <= 1:
+                restant.discard(s)
+                h.retirer_sommet(s)
+                sortir = False
+        
+        # On enlève toutes les arêtes inclues dans d'autre
+        for indice, a in enumerate(h.aretes):
+            for b in h.aretes:
+                if a.dans(b) and a.indice != b.indice:
+                    for s in a.sommets:
+                        sommets_compte[s] -= 1
+                    h.enlever_arete(indice)
+                    sortir = False
+                    break
+        
+        # On continue éventuellement l'algorithme
+        if sortir or len(restant) == 0:
+            break
+
+    return len(restant) == 0
+```
+
+</div><div class="gtop">
+
+</div>
 
 
 
 
 
 ---
+<!-- _class: grid-tlr -->
+# Construction de l'arbre de jointure
+
+<div class="glft">
+
+Il suffit de reprendre l'algorithme précédent, en rajoutant des arêtes au fur et à mesure que des arêtes sont inclues dans d'autres.
+
+</div><div class="grgt">
+
+```py
+def est_acyclique(self):
+    arbre = [[] for _ in range(self.nb_aretes)]
+
+    # [...]
+
+    while True:
+        # [...]
+        
+        # On enlève toutes les arêtes inclues 
+        for indice, a in enumerate(h.aretes):
+            for b in h.aretes:
+                if a.dans(b) and a.indice != b.indice:
+                    arbre[a.indice].append(b.indice)
+                    arbre[b.indice].append(a.indice)
+                    # [...]
+        
+        # [...]
+
+    return arbre if len(restant) == 0 else None
+```
+
+</div><div class="gtop">
+
+</div>
+
+
+
+
+---
+<!-- _class: grid-tlr -->
 # Algorithme de Yannakakis
 
+<div class="glft">
+
+- **Entrée :** une requête conjonctive $q$, une instance $I$
+- **Sortie :** $q(I)$
+- $T \leftarrow$ arbre de jointure de $q$ avec une racine
+- $J \leftarrow$ instance réduite issue de $I$
+- $R_1, ..., R_n \leftarrow$ parcours postfixe de $T$
+- **Pour** $i = 1, ..., n$ **faire**
+  - $S_1, ..., S_k$ enfants de $R_i$ dans $T$
+  - **Pour** $j = 1, ..., k$ **faire**
+    - $R_i^J \leftarrow \pi_{\text{vars}(R_i) \cup \text{head}(q)} (R_i^J \bowtie S_j^J)$
+  - **Fin**
+- **Fin**
+
+</div><div class="grgt">
+
+<center>
+
+![Tables](./images/tables.png)
+
+</center>
+
+</div><div class="gtop">
+
+
+</div>
 
 
 

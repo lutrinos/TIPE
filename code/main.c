@@ -1,5 +1,11 @@
 #include "hyper.c"
 
+bool acyclique(hyper* h) {
+    
+    
+    return false;
+}
+
 int main() {
     hyper* h = creer_hyper(10, true);
 

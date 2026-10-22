@@ -9,3 +9,6 @@ __pycache__
 # Configuration
 typst.toml
 .vscode
+
+# Divers
+sample.py
