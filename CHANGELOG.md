@@ -1,3 +1,6 @@
+# 9 avril 2025
+- Découverte (par hasard) de BERT https://en.wikipedia.org/wiki/BERT_(language_model)
+
 # 5 avril 2025
 - Découverte du Lefff
 - Création d'une structure de trie pour stocker tous les mots du dictionnaire
