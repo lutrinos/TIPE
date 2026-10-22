@@ -1,3 +1,7 @@
+/**
+ * Tout a été codé et commenté à la main ;)
+ */
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>

@@ -1,4 +1,5 @@
 // packages
+#import "@preview/lovelace:0.3.0": *
 #import "@preview/great-theorems:0.1.2": *
 #import "@preview/rich-counters:0.2.2": rich-counter
 
@@ -82,3 +83,88 @@
 ))
 
 #let proof = proofblock(prefix: [_#get-label("proof")._])
+
+
+#let is-not-empty(it) = {
+  return (
+    type(it) != content
+      or not (
+        it.fields() == (:)
+          or (it.has("children") and it.children == ())
+          or (it.has("children") and it.children.all(c => not is-not-empty(c)))
+          or (it.has("text") and it.text.match(regex("^\\s*$")) != none)
+      )
+  )
+}
+
+#let unwrap-singleton(a) = {
+  while type(a) == array and a.len() == 1 {
+    a = a.first()
+  }
+  a
+}
+
+#let transform(body) = {
+  let transform-list(it, numbered) = {
+    if not it.has("children") {
+      if numbered {
+        return (it,)
+      } else {
+        return (no-number(it),)
+      }
+    }
+    let transformed = ()
+    let non-item-child = []
+    let non-item-label = none
+    let items = ()
+    for child in it.children {
+      let f = child.func()
+      if f in (enum.item, list.item) {
+        items += transform-list(child.body, f == enum.item)
+      } else if (
+        child.func() == metadata
+          and child.value.at("identifier", default: "") == "lovelace line label"
+          and "label" in child.value
+      ) {
+        non-item-label = child.value.label
+      } else {
+        non-item-child += child
+      }
+    }
+
+    if is-not-empty(non-item-child) {
+      if numbered {
+        transformed.push(with-line-label(non-item-label, non-item-child))
+      } else {
+        transformed.push(no-number(non-item-child))
+      }
+    }
+    if items.len() > 0 {
+      transformed.push(indent(..items))
+    }
+    transformed
+  }
+
+  let transformed = unwrap-singleton(transform-list(body, false))
+  if type(transformed) != array {
+    transformed = (transformed,)
+  }
+  transformed
+}
+
+
+#let code(..args, body) = figure(
+  kind: "algorithm",
+  supplement: "Algorithme",
+  caption: args.named().at("title"),
+
+  pseudocode-list(
+    booktabs: true,
+    title: args.named().at("title"),
+    line-numbering: none,
+    indentation: 1.4em,
+    line-gap: 0.8em,
+    body,
+  ),
+)
+
