@@ -190,13 +190,15 @@ Ces hypergraphes deviennent par contre rapidement illisible...
 Pour un hypergraphe $(X, H)$ considéré, on peut lui retirer des sommets ou des arêtes. On définit un hypergraphe partiel issu d'un hypergraphe auquel on a a retiré des arêtes, puis un sous-hypergraphe (d'un hypergraphe auquel on a retiré des sommets).
 
 #definition(title: "Hypergraphe partiel")[
-  Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle hypergraphe partiel de $H$ engendré par un ensemble $J subset.eq { 1,2, ..., p }$ la famille
-  $ H_J = (E_j | j in J) $
+  /*Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle hypergraphe partiel de $H$ engendré par un ensemble $J subset.eq { 1,2, ..., p }$ la famille
+  $ H_J = (E_j | j in J) $*/
+  L'hypergraphe partiel de $H = (X, cal(E))$ engendré par une famille $cal(F) subset cal(E)$ est l'hypergraphe $(X_cal(F), cal(F))$ où $ X_cal(F) = union.big_(E_i in cal(F)) E_i $
 ]
 
 #definition(title: "Sous-hypergraphe")[
-  Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle sous-hypergraphe de $H$ induit par un ensemble $A subset.eq X$ la famille
-  $ H_A = (E_j | E_j subset.eq A " pour " 1 <= j <= p) $
+  /*Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle sous-hypergraphe de $H$ induit par un ensemble $A subset.eq X$ la famille
+  $ H_A = (E_j | E_j subset.eq A " pour " 1 <= j <= p) $*/
+  Le sous-hypergraphe de $H = (X,cal(E))$ engendré par un ensemble $A subset X$ est l'hypergraphe $H_A = (A, cal(E)_A)$ où $ cal(E)_A = { E_i inter A | E_i in cal(E) "avec" E_i inter A != emptyset } $
 ]
 
 Nous avons _in fine_ les quelques propositions suivantes.
@@ -384,6 +386,21 @@ Dans un graphe, cette propriété donne une majoration intéressante et assez in
 
 Comme pour les graphes non orientés, la relations d'adjacence est réflexive et symétrique.
 
+#lemma[
+  Soit $H = (X, E_1, ..., E_m)$, alors
+  $ abs(E_i union E_j) = abs(E_i) + abs(E_j) <==> E_i "et" E_j "non adjacentes" $
+]
+
+#proof[
+  On a
+  $
+    & abs(E_i union E_j) = abs(E_i) + abs(E_j) - abs(E_i inter E_j) = abs(E_i) + abs(E_j) \
+    & <==> abs(E_i inter E_j) = 0                                                         \
+    & <==> E_i inter E_j = emptyset                                                       \
+    & <==> not (E_i " et " E_j "adjacentes")
+  $
+]
+
 #question[
-  Qu'en est-il de l'union de 2 (ou plus) arêtes ?
+  Et la généralisation pour un hypergraphe "éclaté" ?
 ]

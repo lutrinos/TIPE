@@ -11,7 +11,7 @@
   // personal/subject related stuff
   author: "Nathan TILLIER",
   title: "Hypergraphes",
-  date: "Juin 2025",
+  date: "Juillet 2025",
 
   // formatting settings
   body-font: "Libertinus Serif",
@@ -31,10 +31,14 @@
 )
 
 // ------------------- content -------------------
+#include "chapter/resume.typ"
+
 #include "chapter/introduction.typ"
 #include "chapter/representation.typ"
 #include "chapter/dual.typ"
 #include "chapter/coloration.typ"
+#include "chapter/matroides.typ"
+
 #include "chapter/appendix.typ"
 
 // ------------------- bibliography -------------------

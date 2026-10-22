@@ -71,29 +71,17 @@
     )
     let is-sub-equation = el != none and el.func() == figure and el.kind == eq
     if equate-settings != none and is-normal-equation {
-      link(
-        el.location(),
-        numbering(
-          el.numbering,
-          ..counter(eq).at(el.location()),
-        ),
-      )
+      link(el.location(), numbering(el.numbering, ..counter(eq).at(el.location())))
     } else if equate-settings != none and not with-subnumbers and is-sub-equation {
-      link(
-        el.location(),
-        numbering(
-          el.numbering,
-          counter(eq).at(el.location()).at(0) - 1,
-        ),
-      )
+      link(el.location(), numbering(
+        el.numbering,
+        counter(eq).at(el.location()).at(0) - 1,
+      ))
     } else if equate-settings != none and is-sub-equation {
-      link(
-        el.location(),
-        numbering(
-          el.numbering,
-          ..el.body.value,
-        ),
-      )
+      link(el.location(), numbering(
+        el.numbering,
+        ..el.body.value,
+      ))
     } else if el != none and el.func() == heading {
       link(el.location())[#el.body]
     } else {
@@ -197,7 +185,7 @@
         colspan: 1,
         align: center,
         institute-logo,
-      )
+      ),
     )
   } else if uni-logo != none {
     grid(
@@ -232,7 +220,7 @@
   v(5fr)
 
   //author
-  text(1.5em, weight: 500, author)
+  text(1.2em, weight: 500, author)
   h(1fr)
   text(1.2em, date)
 
@@ -246,14 +234,10 @@
   }
 
 
-  set page(
-    numbering: "1",
-    number-align: center,
-    header: context {
-      align(center, emph(hydra(1)))
-      v(0.2cm)
-    },
-  ) // Page numbering after cover & abstract => they have no page number
+  set page(numbering: "1", number-align: center, header: context {
+    align(center, emph(hydra(1)))
+    v(0.2cm)
+  }) // Page numbering after cover & abstract => they have no page number
 
   // ------------------- Tables of ... -------------------
 
