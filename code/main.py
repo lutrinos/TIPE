@@ -70,7 +70,7 @@ class JoinNode:
         # Construction de la sélection
         selection = []
         columns = []
-        for v in head.vars if strict else self.variables.union(node.variables):
+        for v in head.variables if strict else self.variables.union(node.variables):
             if v in self.variables or v in node.variables:
                 current = v in self.variables
                 columns.append(v)
@@ -96,7 +96,7 @@ class JoinNode:
         self.table.rows = result
         self.table.columns = columns
         self.record = { v:i for i, v in enumerate(columns) }
-        self.variables = set(head.vars) if strict else self.variables.union(node.variables)
+        self.variables = set(head.variables) if strict else self.variables.union(node.variables)
 
     
     def compute(self, head: Head):
@@ -126,18 +126,18 @@ class Instance:
         return jointure
 
     def jointure(self, query: Query):
-        hyper = Hyper(len(query.vars))
+        hyper = Hyper(len(query.variables))
 
         record = dict()
         record_bis = dict()
 
-        for i, v in enumerate(query.vars):
+        for i, v in enumerate(query.variables):
             record[v] = i
             record_bis[i] = v
 
         for atom in query.atoms:
             arete = Arete()
-            arete.augmenter(*[record[v] for v in atom.vars])
+            arete.augmenter(*[record[v] for v in atom.variables])
             hyper.ajouter_arete(arete)
 
         arbre = hyper.arbre_jointure()
@@ -158,16 +158,16 @@ class Instance:
         for child in node.children:
             self.bottom_up(query, child)
 
-            vars = node.atom.vars.intersection(child.atom.vars)
-            if len(vars) > 0:
+            variables = node.variables.intersection(child.variables)
+            if len(variables) > 0:
                 child.semi_join(node)
 
     # Passage top -> down
     def top_down(self, query: Query, node: JoinNode):
         for child in node.children:
-            vars = node.atom.vars.intersection(child.atom.vars)
+            variables = node.variables.intersection(child.variables)
 
-            if len(vars) > 0:
+            if len(variables) > 0:
                 node.semi_join(child)
             self.top_down(query, child)
 
@@ -235,13 +235,17 @@ r = Query(
     Atom("commune", _, num_cheflieu, _, _, _, _, _, _, _, nom_cheflieu, _, _)
 )
 
+"""
+n = 1
 start = time.time()
-
-n = 100
 for _ in range(n):
     i.query(r)
 end = time.time()
-
-print(f"{end - start:.4f} secondes")
 print(f"Temps moyen : {(end-start)/n :.4f}")
+"""
+
+start = time.time()
+i.query(r)
+end = time.time()
+print(f"{end - start:.4f} secondes")
 #res.print()

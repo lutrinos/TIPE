@@ -3,47 +3,46 @@ from typing import List
 class Atom:
     name: str                   # Nom de la table de l'atome
     index: int                  # Indice de l'atome
-    vars: set[str]              # Variables présentes dans l'atome
-    record: dict[str, int]      # Annuaire variable-colonne
+    variables: set[str]         # Variables présentes dans l'atome
 
     original: tuple[str]
 
-    def __init__(self, name, *vars):
+    def __init__(self, name, *variables):
         self.name = name
-        self.vars = set(vars)
-        self.record = { v:i for i, v in enumerate(vars) }
-        self.original = vars
+        self.variables = set(variables)
+        self.record = { v:i for i, v in enumerate(variables) }
+        self.original = variables
 
-        self.vars.discard('_')
+        self.variables.discard('_')
 
     def __repr__(self):
         return f"{self.name}({ ', '.join(str(v) for v in self.original) })"
 
 class Head:
-    name: str        # Nom de la tête pour faire joli    
-    vars: tuple[str]  # Variables présentes dans la tête
+    name: str               # Nom de la tête pour faire joli    
+    variables: tuple[str]   # Variables présentes dans la tête
 
-    def __init__(self, name: str, *vars):
+    def __init__(self, name: str, *variables):
         self.name = name
-        self.vars = vars
+        self.variables = variables
     
     def __repr__(self):
-        return f"{self.name}({ ', '.join(str(v) for v in self.vars) })"
+        return f"{self.name}({ ', '.join(str(v) for v in self.variables) })"
 
 class Query:
     atoms: tuple[Atom]      # Atomes de la requête
     head: Head              # Tête de la requête
 
-    vars: set[str]           # Variables présentes dans la requête
+    variables: set[str]     # Variables présentes dans la requête
 
     def __init__(self, head: Head, *atoms):
         self.head = head
         self.atoms = atoms
-        self.vars = set()
+        self.variables = set()
 
         for i, atom in enumerate(self.atoms):
             atom.index = i
-            self.vars = self.vars.union(atom.vars)
+            self.variables = self.variables.union(atom.variables)
     
     def __repr__(self):
         return f"{self.head} :- {', '.join(str(a) for a in self.atoms)}"
