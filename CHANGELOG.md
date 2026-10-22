@@ -1,3 +1,8 @@
+# 4 avril 2025
+- Découverte de LanguageTool et Hunspell
+- Lecture rapide de leurs code source
+- Découverte du concept de N-gramme
+
 # 3 avril 2025
 - Lecture brève de
     - https://www.sygtext.fr/
