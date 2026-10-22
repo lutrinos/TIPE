@@ -187,46 +187,39 @@ class Trie:
         self._list("", 0)
     
     def _list(self, prefix, index):
-        flag = self.mmap[index]
-        n = self.mmap[index+1]
-        offset = int.from_bytes(self.mmap[index+2:index+6])
+        node = self.get_node(index)
 
-        if flag & 1 == 1:
+        if node.flag & 1 == 1:
             print(prefix)
 
-        for i in range(n):
-            self._list(
-                prefix + self.convert.get_char(self.mmap[index + 6 + i * 3]),
-                offset + int.from_bytes(self.mmap[index + 7 + 3 * i: index + 9 + 3 * i])
-            )
+        for i, index in node.children:
+            self._list(prefix + self.convert.get_char(i), node.offset + index)
 
     def stats(self):
         print(self._stats(0, ""))
     
     def _stats(self, index, prefix):
-        flag = self.mmap[index]
-        n = self.mmap[index+1]
-        offset = int.from_bytes(self.mmap[index+2:index+6])
+        node = self.get_node(index)
         value = 1
 
         # if flag & 1 == 1:
         #     return
 
-        for i in range(n):
-            value += self._stats(
-                offset + int.from_bytes(self.mmap[index + 7 + 3 * i: index + 9 + 3 * i]),
-                prefix + self.convert.get_char(self.mmap[index + 6 + i * 3]),
-            )
+        for i, index in node.children:
+            value += self._stats(node.offset + index, prefix + self.convert.get_char(i))
 
         return value
         
 
+    # Vérification de mot
     def check(self, word):
         return self._check(self.get_node(0), word)
 
+    # Vérification de suffixe
     def _check(self, node, suffix):
         for k in suffix:
             i = self.convert.get_int(k)
+
             if i is None:
                 return False
             
@@ -237,13 +230,18 @@ class Trie:
             node = self.get_node(index)
         return node.flag & 1 == 1
 
-    # Version 1 - Levensthein distance
-    def correct(self, word, distance=1):
+    # Suggestion de mots
+    def correct(self, word, algorithm="levenshtein", distance=1):
         if self.check(word):
             return []
-        return self._correct(self.get_node(0), word, distance)
-
-    def _correct(self, node, suffix, distance=0):
+        match algorithm:
+            case "levenshtein":
+                return list(set(self._levenshtein(self.get_node(0), word, distance)))
+            case _:
+                raise "Algorithme inconnu."
+        
+    # Version 1 - Distance de Levensthein
+    def _levenshtein(self, node, suffix, distance=0):
         results = []
 
         # Si la distance est nulle, seulement le suffixe peut convenir
@@ -252,7 +250,7 @@ class Trie:
         # Si le suffixe est nul, le noeud actuel peut convenir ou tous les mots suivants de distance inférieure
         if len(suffix) == 0:
             if node.flag & 1 == 1: results.append("")
-            for i, index in node.children: results.extend(concat(self.convert.get_char(i), self._correct(self.get_node(node.offset + index), suffix, distance - 1)))
+            for i, index in node.children: results.extend(concat(self.convert.get_char(i), self._levenshtein(self.get_node(node.offset + index), suffix, distance - 1)))
             return results
         
         # Sinon, on teste toutes les possibilités possibles
@@ -260,11 +258,11 @@ class Trie:
         suffix2 = suffix[1:]
 
         # Délétion (pour corriger le mot)
-        results.extend(self._correct(node, suffix2, distance - 1))
+        results.extend(self._levenshtein(node, suffix2, distance - 1))
 
         # Substitution / insertion (pour corriger le mot)
         for i, index in node.children:
-            results.extend(concat(self.convert.get_char(i), self._correct(self.get_node(node.offset + index), suffix2, distance if i == k else distance - 1)))
-            results.extend(concat(self.convert.get_char(i), self._correct(self.get_node(node.offset + index), suffix, distance - 1)))
+            results.extend(concat(self.convert.get_char(i), self._levenshtein(self.get_node(node.offset + index), suffix2, distance if i == k else distance - 1)))
+            results.extend(concat(self.convert.get_char(i), self._levenshtein(self.get_node(node.offset + index), suffix, distance - 1)))
 
         return results
