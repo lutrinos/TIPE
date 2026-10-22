@@ -250,6 +250,13 @@ class TrieNode:
         if self.i == self.p:
             return self.children.keys()
         return [self.chain[self.i]]
+    
+    def copy(self):
+        node = TrieNode()
+        for v in TrieNode.__slots__:
+            if hasattr(self, v):
+                setattr(node, v, getattr(self, v))
+        return node
 
 
 
@@ -332,10 +339,7 @@ class Trie:
 
                 # S'il faut modifier le noeud initial
                 if new:
-                    newnode = TrieNode()
-                    for v in TrieNode.__slots__:
-                        if hasattr(node, v):
-                            setattr(newnode, v, getattr(node, v))
+                    newnode = node.copy()
                     newnode.i = node.i + 1
                     return newnode
                 node.i += 1
@@ -391,6 +395,7 @@ class Trie:
 
     # Vérification de suffixe
     def _check(self, node, suffix):
+        node = node.copy()
         for char in suffix:
             i = self.convert.get_int(char)
 
@@ -465,7 +470,7 @@ class Trie:
             results.extend(
                 concat(
                     self.convert.get_char(char),
-                    self._levenshtein(self.get_next(node, char, False), suffix, distance - 1)
+                    self._levenshtein(self.get_next(node, char), suffix, distance - 1)
                 )
             )
         return results

@@ -19,4 +19,4 @@ while True:
     utility.print_and_highlight("Corrigé", fix, sentence)
 
     for word in incorrect:
-        print("-\033[0;31m", word, "\033[0;0m", '-->', ', '.join(trie.correct(word)))
+        print("-\033[0;31m", word, "\033[0;0m", '-->', ', '.join(trie.correct(word, distance=3)))

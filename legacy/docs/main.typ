@@ -168,6 +168,21 @@ On peut ensuite potentiellement faire usage des n-grammes pour repérer la phono
 
 Une autre approche pour tester l'appartenance d'un mot sont est le Bloom filter#footnote[https://en.wikipedia.org/wiki/Bloom_filter] (qui peux donner de faux positifs, mais jamais de faux négatifs) ou le BK Tree#footnote[https://en.wikipedia.org/wiki/BK-tree].
 
+Réaliser de manière purement algorithmique un programme qui détecte la correction grammaticale d'une phrase est très difficile.
+
+Par exemple, les phrases (en anglais) ci-dessous sont toutes correctes, avec une position du mot _only_ changeant légèrement le sens.
+
+_Only Luci told Claude that she loved him. \
+Luci only told Claude that she loved him. \
+Luci told only Claude that she loved him. \
+Luci told Claude only that she loved him. \
+Luci told Claude that only she loved him. \
+Luci told Claude that she only loved him. \
+Luci told Claude that she loved only him. \
+Luci told Claude that she loved him only._
+
+
+
 #pagebreak()
 = Utilisation d'un réseau de neurones
 
