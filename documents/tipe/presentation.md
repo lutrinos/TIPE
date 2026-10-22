@@ -110,33 +110,36 @@ $$ \bigcup_{i=0}^p E_i  = X $$
 
 <div class="glft">
 
-```c
-typedef struct arete {
-    int cardinal;
-    int* sommets;
-} arete;
+```py
+class Arete:
+    cardinal: int
+    field: int
+    indice: int
 
-typedef struct hyper {
-    int ordre;
-    int nb_aretes;
-    arete** aretes;
-} hyper;
+class Hyper:
+    aretes: List[Arete]
+    ordre: int
 ```
 
 </div><div class="grgt">
 
-```c
-arete* creer_arete(int cardinal);
-void liberer_arete(arete* a);
-arete* copier_arete(arete* a);
-void augmenter_arete(arete* a, int sommet);
-void reduire_arete(arete* a, int sommet);
-bool dans_arete(arete* a, int sommet);
+```py
+class Arete:
+    def sommets(self)
+    def copier(self)
+    def augmenter(self, sommet: int)
+    def reduire(self, sommet: int)
+    def dans(self, sommet: int)
+    def contient(self, arete: Arete)
 
-hyper* creer_hyper(int ordre, bool strict);
-bool est_valide(hyper* h);
-void ajouter_arete(hyper* h, arete* a);
-void enlever_arete(hyper* h, int indice);
+class Hyper:
+    def nb_aretes(self)
+    def decompte(self, sommet: int)
+    def est_valide(self)
+    def retirer_sommet(self, sommet: int)
+    def copier(self)
+    def ajouter_arere(self, arete: Arete)
+    def enlever_arete(self, arete: int)
 ```
 
 </div><div class="gtop">
@@ -449,20 +452,181 @@ def est_acyclique(self):
 
 
 ---
+<!-- _class: grid-lrb -->
+# Construction de la base de données
+
+
+<div class="glft">
+
+```py
+class Table:
+    name: str
+    rows: List[tuple]
+    columns: List[str]
+
+    def len(self)
+    def import_from(self, csv_path: str)
+    def export_to(self, csv_path: str)
+    def project(self, selection: List[bool], validate)
+```
+
+
+</div><div class="grgt">
+
+```py
+class Instance:
+    tables: dict[str, Table]
+
+    def add_table(self, table: Table)
+    def jointure(self, query: Query)
+
+    def bottom_up(self, query: Query, node: JoinNode)
+    def top_down(self, query: Query, node: JoinNode)
+    def query(self, Query)
+```
+
+</div><div class="gbot">
+
+```py
+i = Instance()
+
+communes = Table("commune")
+communes.import_from("code/data/v_commune_2025.csv")
+
+i.add_table(communes)
+```
+
+
+</div>
+
+
+---
+# Requête
+
+Construction inductive d'une requête
+
+```py
+nom_com = "nom_com"
+nom_dep = "nom_dep"
+nom_reg = "nom_reg"
+num_dep = "num_dep"
+num_reg = "num_reg"
+
+_ = "_"
+
+r = Query(
+    Head("requête", nom_com, nom_dep, nom_reg),
+    Atom("commune", _, _, num_reg, num_dep, _, _, _, _, _, nom_com, _, _),
+    Atom("département", num_dep, _, _, _, _, _, nom_dep),
+    Atom("région", num_reg, _, _, _, _, nom_reg),
+)
+```
+
+
+
+
+---
+# Réalisation d'une requête
+```py
+# Réalisation d'une requête
+def query(self, query: Query):
+
+    # Vérification de la requête
+    for atom in query.atoms:
+        if atom.name not in self.tables:
+            raise InterruptedError(atom.name + " non présent dans les tables.")
+        if len(atom.original) != len(self.tables[atom.name].columns):
+            raise InterruptedError("Nombre de colonnes non correspondant dans la table " + atom.name)
+
+    # Création de l'arbre de jointure
+    jointree = self.jointure(query)
+
+    # Premier passage
+    self.bottom_up(query, jointree)
+
+    # Deuxième passage
+    self.top_down(query, jointree)
+
+    # On réalise la jointure
+    jointree.compute(query.head)
+
+    return jointree.table
+```
+
+
+
+---
 <!-- _class: chapter -->
 # Résultats expérimentaux
 
 
 
 
+---
+# Exemple de requête
+## Commune, département, région
+```sql
+SELECT commune.nom, departement.nom, region.nom FROM commune
+JOIN departement ON departement.numero = commune.departement
+JOIN region ON region.numero = commune.region
+```
+
+```py
+Query(
+    Head("requête", nom_com, nom_dep, nom_reg),
+    Atom("commune", _, _, num_reg, num_dep, _, _, _, _, _, nom_com, _, _),
+    Atom("département", num_dep, _, _, _, _, _, nom_dep),
+    Atom("région", num_reg, _, _, _, _, nom_reg),
+)
+```
+
+**Résultats :**
+- Version simple : 0.17 secondes
+- Version double parcours : 0.08 secondes
+
+
+
 
 ---
-# Résultats expérimentaux
+# Exemple de requête
+## Commune, cheflieu
+```sql
+SELECT commune.nom, departement.nom, fheflieu.nom FROM commune
+JOIN departement ON departement.numero = commune.departement
+JOIN commune as cheflieu ON commune.numero = departement.cheflieu
+```
+
+```py
+Query(
+    Head("requête", nom_com, nom_cheflieu),
+    Atom("commune", _, _, _, num_dep, _, _, _, _, _, nom_com, _, _),
+    Atom("département", num_dep, _, num_cheflieu, _, _, _, _),
+    Atom("commune", _, num_cheflieu, _, _, _, _, _, _, _, nom_cheflieu, _, _)
+)
+```
+
+**Résultats :**
+- Version simple : 0.09 secondes
+- Version double parcours : 0.06 secondes
 
 
 
+---
+# Enchaînement requêtes
+
+Le temps pris reste consistant pour des batch de requêtes.
 
 
 ---
 <!-- _class: chapter -->
 # Conclusion
+
+
+
+
+---
+# Conclusion
+- On peut étendre aisément la structure de requête pour ajouter des conditions sur les valeurs
+- Ne pas copier les valeurs directement, mais des pointeurs vers les valeurs de la table (indices), pour consommer moins de mémoire (gains de performance aussi ?)
+- On peut le programmer en C, Rust pour de meilleurs performances, et une gestion de la mémoire plus délicate
+- La constante est assez élevée, dans la pratique ce n'est pas l'algorithme qui est toujours utilisé.

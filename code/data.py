@@ -173,7 +173,7 @@ class Instance:
 
     # Réalisation d'une requête
     def query(self, query: Query):
-        # Vérification et simplification de la requête
+        # Vérification de la requête
         for atom in query.atoms:
             if atom.name not in self.tables:
                 raise InterruptedError(atom.name + " non présent dans les tables.")
@@ -218,24 +218,30 @@ i.add_table(departements)
 i.add_table(regions)
 
 nom_com = "nom_com"
+
 nom_dep = "nom_dep"
-nom_reg = "nom_reg"
 num_dep = "num_dep"
-num_reg = "num_reg"
+
+nom_cheflieu = "nom_chef"
+num_cheflieu = "num_chef"
+
 
 _ = "_"
 
 r = Query(
-    Head("requête", nom_com, nom_dep, nom_reg),
-    Atom("commune", _, _, num_reg, num_dep, _, _, _, _, _, nom_com, _, _),
-    Atom("département", num_dep, _, _, _, _, _, nom_dep),
-    Atom("région", num_reg, _, _, _, _, nom_reg),
+    Head("requête", nom_com, nom_cheflieu),
+    Atom("commune", _, _, _, num_dep, _, _, _, _, _, nom_com, _, _),
+    Atom("département", num_dep, _, num_cheflieu, _, _, _, nom_dep),
+    Atom("commune", _, num_cheflieu, _, _, _, _, _, _, _, nom_cheflieu, _, _)
 )
 
 start = time.time()
-res = i.query(r)
+
+n = 100
+for _ in range(n):
+    i.query(r)
 end = time.time()
 
 print(f"{end - start:.4f} secondes")
-print(res.len)
+print(f"Temps moyen : {(end-start)/n :.4f}")
 #res.print()
