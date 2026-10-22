@@ -1,9 +1,10 @@
 // global
-#import "/lib.typ": template
+#import "/customization/lib.typ": template
 
 //local
 #import "/customization/colors.typ": *
 
+#let font = "New Computer Modern"
 
 #show: template.with(
   lang: "fr",
@@ -14,8 +15,8 @@
   date: "Juillet 2025",
 
   // formatting settings
-  body-font: "Libertinus Serif",
-  cover-font: "Libertinus Serif",
+  body-font: font,
+  cover-font: font,
 
   // chapters that need special placement
   abstract: none, //include "chapter/abstract.typ",

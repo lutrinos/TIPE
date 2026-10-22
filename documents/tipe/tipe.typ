@@ -1,9 +1,10 @@
 // global
-#import "/lib.typ": template
+#import "/customization/lib.typ": template
 
 //local
 #import "/customization/colors.typ": *
 
+#let font = "New Computer Modern"
 
 #show: template.with(
   lang: "fr",
@@ -14,8 +15,8 @@
   date: "Septembre 2025",
 
   // formatting settings
-  body-font: "Libertinus Serif",
-  cover-font: "Libertinus Serif",
+  body-font: font,
+  cover-font: font,
 
   // chapters that need special placement
   abstract: none, //include "chapter/abstract.typ",
@@ -31,8 +32,13 @@
 )
 
 // ------------------- content -------------------
-= Applications aux bases de données
-= Applications à la logique propositionnelle
+
+#include "chapitres/generalites.typ"
+
+#include "chapitres/database.typ"
+#include "chapitres/logique.typ"
+
+// #include "chapitres/notes.typ"
 
 // ------------------- bibliography -------------------
 #bibliography("bibliography.bib")

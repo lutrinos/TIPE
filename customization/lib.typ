@@ -246,6 +246,8 @@
   outline(depth: 3, indent: 1em)
   pagebreak()
 
+  set par(justify: true)
+
 
   // ------------------- Content -------------------
   body
