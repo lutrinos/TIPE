@@ -52,9 +52,13 @@ On rappelle brièvement ce que sont une projection et une sélection.
 	Si $R$ est une relation et $H = (A_1, ..., A_n)$ des attributs de $R$, on appelle projection de $R$ sur $H$ et on note  $pi_H R$ la relaiton obtenue à partir de $R$ en ne gardant que les attributs $A_1, ..., A_n$ et en supprimant les doublons.
 ]
 
+Quand on réalise une projection, on perd (temporairement) de l'information en enlevant des attributs de la relation, ce qui est parfois utile quand certaines informations ne nous intéressent pas.
+
 #definition(title: "Sélection")[
-	Soient $R$ une relation et $E$ une expression logique portant sur les attributs de $R$. On appelle sélection de $R$ selon $E$ (qu'on note $sigma_(E) R$) la relation obtenue à partir de $R$ enne gardant que les n-uplets de $R$  satisfaisant l'expression logique $E$.
+	Soient $R$ une relation et $E$ une expression logique portant sur les attributs de $R$. On appelle sélection de $R$ selon $E$ (qu'on note $sigma_(E) R$) la relation obtenue à partir de $R$ en ne gardant que les n-uplets de $R$  satisfaisant l'expression logique $E$.
 ]
+
+Dans la suite, on ne s'autorisera que des expressions logiques avec des égalités, l'algorithme décrit fonctionnant dans ce cadre précis.
 
 ==  Requêtes conjonctives
 
@@ -148,3 +152,14 @@ En bref, rajouter des n-uplets dans l'instance ne diminuera jamais le nombre de 
 #proposition[
 	Toute requête conjonctive est satisfiable.
 ]
+
+#remark[
+	Il est au passage intéressant de noter que :
+	- savoir si une requête conjonctive est inclue dans un autre
+	- savoir si deux requêtes conjonctives sont équivalentes
+	- évaluer une requête conjonctive
+	- simplifier une requête conjonctive
+	#align(right)[...sont des problèmes NP-complets.#footnote[D'ailleurs, certains autre problèmes liés sont non décidables dans toutes les algèbres relationnelles, et le premier point, si on s'autorise des comparaison différentes de l'égalité ($>$ ou $!=$) sont bien plus que NP-complet (leur classe de complexité est $Pi_2^p$)]]
+]
+
+Ce qui justifie le fait de s'intéresser au cas particulier des requêtes acycliques !

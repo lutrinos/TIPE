@@ -34,11 +34,10 @@
 // ------------------- content -------------------
 
 #include "chapitres/generalites.typ"
-
 #include "chapitres/algebre.typ"
 
 #include "chapitres/database.typ"
-//#include "chapitres/logique.typ"
+#include "chapitres/oral.typ"
 
 // #include "chapitres/notes.typ"
 

@@ -14,54 +14,24 @@
 = Application aux bases de données
 
 #remark[
-  La majorité des éléments de cette partie (algorithmes et autres) tirent leur origine de ce papier @luo2025 (anglophone) sur l'optimisation des recherches acycliques.
+  La majorité des éléments de cette partie (algorithmes et autres) tirent leur origine de ce papier @luo2025 (anglophone) sur l'optimisation des recherches acycliques ainsi que de @lecture2019
 ]
 
-== Chronologie
-
-Présentation de quinze minutes : c'est très court. Il faudra donc s'en tenir à l'essentiel quitte à "lancer des bâtons" en vue des questions (notamment certaines preuves).
-
-Dans l'idéal, il faudrait suivre cette chronologie#footnote[Pas trop ambitieuse  si  possible]:
-- Introduction et définitions (3 minutes)
-- Explication des algorithmes : fonctionnement, intuition (et début de formulation ?) (7 minutes)
-- Résultats expérimentaux : objectifs et démarches, présentation des résultats et commentaires (3 minutes)
-- Conclusion : améliorations possibles, état de l'art et bilan (2 minute)
-
-C'est _très_ court.
-
-== Introduction et définitions
-
-On peut prendre comme fil conducteur l'exemple du schéma de données suivant, exprimant la participation d'un étudiant à certains cours.
-
-```sql
-CREATE TABLE ecole (
-  id INT PRIMARY KEY,
-  nom CHAR
-)
-
-CREATE TABLE etudiants (
-  id INT PRIMARY KEY,
-  nom CHAR,
-  ecole INT,
-  classe INT
-)
-
-CREATE TABLE cours (
-  id INT PRIMARY KEY,
-  ecole INT,
-  classe INT,
-  matiere CHAR
-)
-```
-
-À faire :
-- définir/expliquer ce qu'est une relation, une requête conjonctive, une jointure
-- définir ce qu'est un hypergraphe
-- expliquer comment on passe d'une requête à son hypergraphe de jointure
-
-== Arbres de jointure
+== Acyclicité et arbres de jointure
 
 Dans le cadre de l'application aux bases de données la notion d'arbre de jointure est particulièrement intéressante. Tout hypergraphe n'admet pas nécessairement un arbre de jointure, et il est défini de la manière suivante sous réserve d'existence.
+
+On s'intéresse tout d'abord à la manière dont on va contruire l'hypergraphe, à partir d'une requête  conjonctive.
+
+#definition(title: "Hypergraphe d'une requête")[
+	Soit une requête acyclique $q$.
+	$ q(x_1, ..., x_n) :- R_1(arrow(y_1)),...,R_p (arrow(y_p)) $
+	On pose l'hypergraphe $H(q) = (V, E)$ associé à $q$ de la façon suivante :
+	- l'ensemble des sommets $V$ contient toutes les variables du corps de $q$
+	- l'ensemble des arêtes $E$ contient, pour chaque clause atomique de la requête, l'ensemble des variables apparaissant dedans.
+]
+
+On cherche ensuite un cas dans lequel la requête est plus  simple à utiliser (_i.e._ avec moins de conditions contraignantes). Une manière est de cherche un arbre de jointure sur cet hypergraphe.
 
 #definition(title: "Arbre de jointure")[
   Soit $H$ un hypergraphe sur $X$. On considère $T$ un graphe ayant pour sommets les arêtes de $H$.
@@ -79,7 +49,21 @@ Bien évidemment, un des buts sera de déterminer s'il existe un arbre de jointu
   Soit $H$ un hypergraphe sur $X$. $H$ est $alpha$-acyclique s'il contient un arbre de jointure.
 ]
 
-Cette définition d'$alpha$-acyclicité ne va pas de soi...mais ce n'est pas là où il faut mettre l'accent.
+Cette définition d'$alpha$-acyclicité ne va pas de soi...mais ce n'est pas là où il faut mettre l'accent. En revanche, un point qui peut poser problème est la connexité : ce qui nous intéresse est que la requête soit acyclique, connexe ou non.
+
+On utilise alors, de manière similaire à la théorie des graphes, le vocable de forêt.
+
+#definition(title: "Forêt de jointure")[
+	Un forêtde jointure d'une requête conjonctive est une forêt $F = (V, E)$ dont tous les sommets sont des clauses atomiques de $q$ et tel que pour chaque paire de clauses atomiques $R$ et $S$ ayant des variables en commun, les condition suivantes soient vérifiées :
+	- $R$ et $S$ appartiennent à la même composante connexe.
+	- toutes les variables communes à $R$ et $S$ sont présentes  sur un unique chemin de $R$ à $S$.
+
+	On appelle $F$ arbre de jointure si c'est un arbre.
+]
+
+#proposition[
+	Une requête conjonctive est acyclique si et seulement si elle possède une forêt de jointure.
+]
 
 == Réduction Graham-Yu-Ozsoyoglu
 
@@ -181,14 +165,3 @@ Cet algorithme est expliqué dans @lecture2019, la thèse @duris2009 cite égale
 À faire :
 - présenter l'algorithme, expliquer pourquoi il fonctionne (préparer des éléments de preuve)
 - simuler "à la main" l'exécution d'une requête ?
-
-== Implémentation
-- implémentation en C (plus simple en python sans doute...)
-
-== Résultats expérimentaux
-- comparer l'approche naïve (produits cartésiens et compagnie) avec celle de l'algorithme en fonction de la taille de la base de données et de certains paramètres
-- l'exécuter sur une partie des données open data de parcoursup (couple établissements - formations)
-
-== Conclusion
-- insister sur le fait que c'est NP-difficile de le cas général
-- mettre les améliorations en perspective : existe-t-il des variantes plus efficaces dans certains cas particuliers différents ? Il y a-t-il des moyens d'utiliser cette approche pour des requêtes "presque" $alpha$-acyclique ?
