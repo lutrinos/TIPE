@@ -36,7 +36,7 @@
 #include "chapitres/generalites.typ"
 
 #include "chapitres/database.typ"
-#include "chapitres/logique.typ"
+//#include "chapitres/logique.typ"
 
 // #include "chapitres/notes.typ"
 

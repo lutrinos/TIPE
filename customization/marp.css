@@ -1,0 +1,26 @@
+/* @theme hsmw */
+
+@import "_hsmw";
+
+@import url('data:text/css, .bespoke-progress-bar {background-color: rgba(0, 105, 180, 1) !important;}');
+
+:root {
+    --hsmw-theme-color: #0069b4;
+}
+
+/*
+section {
+    background-image: url("");
+}*/
+
+
+section.chapter-alt {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='66%25' height='100%25' fill='%230069b4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-size: auto, auto;
+}
+
+
+section.title {
+    background-color: #f6f8fa;
+}

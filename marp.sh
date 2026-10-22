@@ -1,0 +1,1 @@
+marp ./documents/tipe/presentation.md --pdf --allow-local-files --theme-set ./customization/_marp.css ./customization/marp.css

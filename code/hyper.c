@@ -6,11 +6,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-struct arete {
-    int cardinal;
-    int* sommets;
-};
-
 /**
  * Structure : arete
  * -
@@ -19,13 +14,10 @@ struct arete {
  * cardinal : cardinal de l'arête
  * sommets : tableau des sommets de l'arête
  */
-typedef struct arete arete;
-
-struct hyper {
-    int ordre;
-    int nb_aretes;
-    arete** aretes;
-};
+typedef struct arete {
+    int cardinal;
+    int* sommets;
+} arete;
 
 /**
  * Structure : hypergraphe
@@ -36,7 +28,11 @@ struct hyper {
  * nb_aretes : nombre d'arêtes
  * aretes :  tableau des pointeurs des arêtes
  */
-typedef struct hyper hyper;
+typedef struct hyper {
+    int ordre;
+    int nb_aretes;
+    arete** aretes;
+} hyper;
 
 /**
  * Fonction : creer_arete
