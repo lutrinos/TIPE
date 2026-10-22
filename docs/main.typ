@@ -25,6 +25,9 @@
 
 Construire un correcteur syntaxique et grammatical flexible. On utilisera deux approches distinctes : une algorithmique et une basée sur un réseau de neurones.
 
+== Historique
+Pour un bref historique, le chapitre introduisant les motivations dans la thèse @lima1990 synthétise l'évolution des premiers algorithmes et outils reliés au traitement des langues naturelles.
+
 == Définitions
 
 Tout d'abord, il est nécessaire de définir ce que l'on souhaite réaliser, et cela passe partiellement par la définition précise de ce qu'on appelle syntaxe, grammaire et orthographe.
@@ -48,7 +51,6 @@ La *suggestion de reformulations*. Un phrase peut-être grammaticalement et synt
 
 #pagebreak()
 = Approche algorithmique
-Lorem.
 
 #pagebreak()
 = Utilisation d'un réseau de neurones

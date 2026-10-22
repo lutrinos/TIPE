@@ -2,7 +2,7 @@
 # Source du format https://github.com/typst/hayagriva/blob/main/docs/file-format.md
 # Web app pour passer du  format BibTex au format hayagriva https://jonasloos.github.io/bibtex-to-hayagriva-webapp/
 
-# Algorithmie
+# Thèses
 fayva1990:
   type: thesis
   title: Aide à la détection de fautes grammaticales par une analyse progressive des phrases
@@ -13,6 +13,87 @@ fayva1990:
     value: https://theses.fr/1990INPL012N,
     date: 2025-04-03
   }
+
+lima1990:
+  type: thesis
+  title: Contribution à l'étude du traitement des erreurs au niveau lexico-syntaxique dans un texte écrit en français
+  author: Lima, Vera Lúcia Strube de
+  date: 1990
+  page-range: 1
+  url: {
+    value: http://www.theses.fr/1990GRE10034,
+    date: 2025-04-03
+  }
+
+benkhelil:tel-02988287:
+  type: thesis
+  title: '{Construction semi-automatique d''une grammaire d''arbres adjoints pour l''analyse syntaxico-sémantique de l''arabe}'
+  author: Ben Khelil, Cherifa
+  date: 2019-06
+  organization: '{Université d''Orléans ; Université de la Manouba (Tunisie)}'
+  issue: 2019ORLE2013
+  url: {
+    value: https://theses.hal.science/tel-02988287,
+    date: 2025-04-03
+  }
+
+courtin:tel-00287617:
+  type: thesis
+  title: '{Algorithmes pour le traitement interactif des langues naturelles}'
+  author: Courtin, Jacques
+  date: 1977-10
+  organization: '{Institut National Polytechnique de Grenoble - INPG ; Université Joseph-Fourier - Grenoble I}'
+  url: {
+    value: https://theses.hal.science/tel-00287617,
+    date: 2025-04-03
+  }
+
+merle:tel-00300274:
+  type: thesis
+  title: '{Un analyseur pré-syntaxique pour le levée des ambiguïtés dans des documents écrits en langue naturelle : application à l''indexation automatique}'
+  author: Merle, Alain
+  date: 1982-09
+  organization: '{Institut National Polytechnique de Grenoble - INPG}'
+  url: {
+    value: https://theses.hal.science/tel-00300274,
+    date: 2025-04-03
+  }
+
+torresmoreno:tel-00390068:
+  type: thesis
+  title: '{Du textuel au numérique : analyse et classification automatiques}'
+  author: Torres-Moreno, Juan-Manuel
+  date: 2007-12
+  organization: '{Université d''Avignon}'
+  url: {
+    value: https://theses.hal.science/tel-00390068,
+    date: 2025-04-03
+  }
+
+colin:tel-02949349:
+  type: thesis
+  title: '{Traitement automatique des langues et génération automatique d''exercices de grammaire}'
+  author: Colin, Émilie
+  date: 2020-06
+  organization: '{Université de Lorraine}'
+  issue: 2020LORR0059
+  url: {
+    value: https://hal.univ-lorraine.fr/tel-02949349,
+    date: 2025-04-03
+  }
+
+charton:tel-00622561:
+  type: thesis
+  title: '{Génération de phrases multilingues par apprentissage automatique de modèles de phrases}'
+  author: Charton, Éric
+  date: 2010-11
+  organization: '{Université d''Avignon}'
+  issue: 2010AVIG0175
+  url: {
+    value: https://theses.hal.science/tel-00622561,
+    date: 2025-04-03
+  }
+
 
 # Neural networks
 

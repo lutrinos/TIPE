@@ -1,0 +1,19 @@
+# 3 avril 2025
+- Lecture brève de
+    - https://www.sygtext.fr/
+    - https://www.nature.com/articles/nbt1004-1315
+- Recherche de thèses sur https://theses.fr
+    - https://theses.fr/1990INPL012N
+    - https://theses.fr/1990GRE10034
+- Recherche de thèses sur https://theses.hal.science
+    - https://theses.hal.science/tel-02988287v1
+    - https://theses.hal.science/tel-00287617v1
+    - https://theses.hal.science/tel-00300274v1
+    - https://theses.hal.science/tel-00390068v1
+    - https://theses.hal.science/tel-02949349v1
+    - https://theses.hal.science/tel-00622561v1
+    - Arrêt au début de https://theses.hal.science/search/index/?q=syntaxe&rows=30&level0_domain_s=info&page=5
+
+# 2 Avril 2025
+- Création du dépôt
+- Premières recherches et structuration
