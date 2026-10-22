@@ -6,7 +6,7 @@ from classes.converter import Converter
 import re
 
 convert = Converter("./data/mapping.csv")
-trie = Trie(convert, "./data/wiki.bin")
+trie = Trie(convert, "./data/lefff.bin")
 
 f = open("./ressources/l_avare.txt", "r")
 

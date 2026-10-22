@@ -5,20 +5,19 @@ from copy import deepcopy
 """
 Implémentation d'une trie
 
-Protocole de stockage:
+PROTOCOLE DE STOCKAGE (TRIE)
 
 Noeud simple
-----------------------------------------------------------------------------------------------------------
-    flag        |       n           |       offset      |       clés  (char | offset)
-    1 octet     |       1 octet     |       4 octets    |       3 octets par clé
-----------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
+    flag        |       n           |       offset      |       clés  (char | offset)       |       Location des métadonnées
+    1 octet     |       1 octet     |       4 octets    |       3 octets par clé            |       4 octets
+---------------------------------------------------------------------------------------------------------------------------------
 
 Noeud long
 -----------------------------------------------------------------------------------------------------------------------------------
     flag        |       n           |       p           |       offset      |       chars       |       clés  (char | offset)
     1 octet     |       1 octet     |       1 octet     |       4 octets    |       p octets    |       3 octets par clé
 -----------------------------------------------------------------------------------------------------------------------------------
-
 
 Avec
 - flag:
@@ -30,6 +29,17 @@ Avec
 - clés: clés du noeud
 
 
+PROTOCOLE DE STOCKAGE (METADONNÉES)
+-----------------------------------------------------------------------------
+    flag        |
+    1 octet     |
+-----------------------------------------------------------------------------
+
+Avec
+- flag:
+  - bit 0-6: type de mot
+  - bit 7: genre (masculin, féminin)
+
 TODO:
 - prononciation
 - homophones
@@ -39,6 +49,10 @@ TODO:
 - genre (masculin, féminin)
 """
 
+class FLAGS:
+    IS_WORD = 1
+    HAS_CHILD = 2
+    IS_LONG = 4
 
 
 class Chunk:
@@ -56,9 +70,10 @@ class Chunk:
 # Interface pour créer la trie
 class TrieBuilder:
 
-    def __init__(self, convert, path):
+    def __init__(self, convert, path, metapath):
         self.convert = convert
         self.path = path
+        self.metapath = metapath
         self.root = {}
 
         # Offsets to override
@@ -70,7 +85,7 @@ class TrieBuilder:
 
         for c in key:
             k = self.convert.get_int(c)
-            if k is None:
+            if k == None:
                 return
             if k not in node:
                 node[k] = {}
@@ -88,7 +103,7 @@ class TrieBuilder:
         keys = [i for i in node if i != -1]
         if len(keys) == 1:
             result = self._shorten_nodes(node[keys[0]])
-            if result is not None:
+            if result != None:
                 chain, nnode = result
                 return ([keys[0]] + chain, nnode)
             return ([keys[0]], node[keys[0]])
@@ -104,19 +119,19 @@ class TrieBuilder:
         n = len(keys)
         
         # Si ce noeud doit devenir complexe
-        if n == 1 and is_end is False:
-            flag |= 4
+        if n == 1 and is_end == False:
+            flag |= FLAGS.IS_LONG
             c, nnode = self._shorten_nodes(node)
             node, keys, chain, is_end, is_long = nnode, sorted([i for i in nnode if i != -1]), c, -1 in nnode, True
             n = len(keys)
         
         # Si ce noeud termine un mot
         if is_end:
-            flag |= 1
+            flag |= FLAGS.IS_WORD
 
-        # Si ce noeud est en fin de chaîne (n'a pas d'enfant)
+        # Si ce noeud a au moins un enfant
         if n != 0:
-            flag |= 2
+            flag |= FLAGS.HAS_CHILD
 
         # Écriture de l'en-tête
         if is_long:
@@ -126,7 +141,8 @@ class TrieBuilder:
 
         # Initialisation de la position de l'offset du chunk
         next_chunk.byte = file.tell()
-        file.write(bytes([0, 0, 0, 0]))
+        if n != 0:
+            file.write(bytes([0, 0, 0, 0]))
 
         # Ajout de la chaîne si besoin
         if is_long:
@@ -137,6 +153,11 @@ class TrieBuilder:
             next_chunk.nodes.append(node[i])
             next_chunk.bytes.append(file.tell() + 1)
             file.write(bytes([i, 0, 0]))
+        
+        # Ajout des métadonnées
+        if is_end:
+            file.write(self.metafile.tell().to_bytes(4))
+
         
         # Retourne un nouveau chunk si le noeud a des enfants
         if n == 0:
@@ -156,7 +177,7 @@ class TrieBuilder:
             self.overrides.append((chunk.bytes[index], file.tell() - chunk_offset, 2))
             next_chunk = self.write_node(file, chunk.nodes[index])
 
-            if next_chunk is not None:
+            if next_chunk != None:
                 next_chunks.append(next_chunk)
 
         # On renvoie les prochains chunks de données
@@ -173,6 +194,8 @@ class TrieBuilder:
     
     def build(self):
         with open(self.path, "wb") as file:
+            self.metafile = open(self.metapath, "wb")
+
             chunk = Chunk()
             chunk.byte = -1
             chunk.nodes = [self.root]
@@ -189,6 +212,8 @@ class TrieBuilder:
             
                 chunks = next_chunks
                 next_chunks = []
+            
+            self.metafile.close()
         self.override()
 
 def concat(v, arr):
@@ -208,9 +233,15 @@ class TrieNode:
         # Internal state
         "i"
     ]
+
+    def has_child(self):
+        return self.flag & FLAGS.HAS_CHILD
+
+    def is_long(self):
+        return self.flag & FLAGS.IS_LONG
     
     def is_word(self):
-        return self.flag & 1 and self.p == self.i
+        return self.flag & FLAGS.IS_WORD and self.p == self.i
     
     def chars(self):
         if self.i == self.p:
@@ -239,52 +270,46 @@ class Trie:
         raw = bytes()
 
         # Si c'est un noeud long
-        if node.flag & 4:
+        if node.flag & FLAGS.IS_LONG:
             node.p = self.mmap[index+2]
             raw = self.mmap[index + 3: index + 7 + node.p + 3 * node.n]
         else:
             raw = self.mmap[index + 2: index + 6 + 3 * node.n]
-                
-        node.offset = int.from_bytes(raw[0:4])
+        
+        offset = 0
+
+        # S'il a des enfants
+        if node.has_child():
+            node.offset = int.from_bytes(raw[0:4])
+            offset = 4
+
 
         # Construction de la chaîne si besoin
-        if node.flag & 4:
-            node.chain = list(raw[4:4+node.p])
+        if node.is_long():
+            node.chain = list(raw[offset : offset + node.p])
 
-        node.children = { raw[4 + node.p + i*3]: int.from_bytes(raw[5 + node.p + 3*i : 7 + node.p + 3*i]) for i in range(node.n) }
+        node.children = { raw[offset + node.p + i*3]: int.from_bytes(raw[offset + 1 + node.p + 3*i : offset + 3 + node.p + 3*i]) for i in range(node.n) }
 
         return node
 
     def list(self):
-        self._list("", 0)
+        self._list(self.root, "")
     
-    def _list(self, prefix, index):
-        node = self.get_node(index)
+    def _list(self, node, prefix):
+        if node.is_word():
+            print(prefix)
 
-        if node.flag & 4:
-            for i in node.chain:
-                prefix += self.convert.get_char(i)
-
-        if node.flag & 1:
-            print("-", prefix)
-
-        for i in node.children:
-            self._list(prefix + self.convert.get_char(i), node.offset + node.children[i])
+        for c in node.chars():
+            self._list(self.get_next(node, c), prefix + self.convert.get_char(c))
 
     def stats(self):
-        print(self._stats(0, ""))
+        print(self._stats(self.root, 0))
     
-    def _stats(self, index, prefix):
-        node = self.get_node(index)
-        value = (0, 0)
+    def _stats(self, node, _):
+        value = 1 if len(node.chars()) == 0 else 0
 
-        # if flag & 1 == 1:
-        #     return
-
-        for i, index in node.children:
-            a, b = self._stats(node.offset + index, prefix + self.convert.get_char(i))
-            b = b + 1 if node.n <= 1 else 0
-            value = (max(value[0], a, b), b)
+        for c in node.chars():
+            value += self._stats(self.get_next(node, c), 0)
 
         return value
     
@@ -304,7 +329,12 @@ class Trie:
 
                 # S'il faut modifier le noeud initial
                 if new:
-                    node.__dict__.update(node.__dict__)
+                    newnode = TrieNode()
+                    for v in TrieNode.__slots__:
+                        if hasattr(node, v):
+                            setattr(newnode, v, getattr(node, v))
+                    newnode.i = node.i + 1
+                    return newnode
                 node.i += 1
                 return node
         return None
@@ -317,12 +347,12 @@ class Trie:
         for char in suffix:
             i = self.convert.get_int(char)
 
-            if i is None:
+            if i == None:
                 return False
             
             node = self.get_next(node, i, False)
 
-            if node is None:
+            if node == None:
                 return False
         return node.is_word()
 
@@ -357,14 +387,28 @@ class Trie:
             return results
         
         # Sinon, on teste toutes les possibilités possibles
+        node_chars = node.chars()
         k = self.convert.get_int(suffix[0])
         suffix2 = suffix[1:]
+
+        # Permutation
+        if len(suffix) >= 2 and len(node_chars) >= 1 and self.convert.get_int(suffix[1]) in node_chars:
+            nnode = self.get_next(node, self.convert.get_int(suffix[1]))
+            nnode_chars = nnode.chars()
+            if len(nnode_chars) >= 1  and k in nnode_chars:
+                results.extend(
+                    concat(
+                        suffix[1] + suffix[0],
+                        self._levenshtein(self.get_next(nnode, k), suffix[2:], distance - 1)
+                    )
+                )
+            
 
         # Délétion (pour corriger le mot)
         results.extend(self._levenshtein(node, suffix2, distance - 1))
 
         # Substitution / insertion (pour corriger le mot)
-        for char in node.chars():
+        for char in node_chars:
             results.extend(
                 concat(
                     self.convert.get_char(char),

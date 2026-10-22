@@ -139,7 +139,7 @@ Ensuite, cela permet de calculer quelques statistiques sur le corpus.
 - Les occurences des trigrammes dans les mots
 - Les préfixes avec plus de 10 ou 4 enfants
 
-Puis on peut implémenter assez rapidement un algorithme de correction avec la distance de Levenshtein, avec de la programmation dynamique sur l'arbre. On note l'apparition de suggestions duppliquées lorsqu'il y a plusieurs manières d'arriver au même mot en une édition.
+Puis on peut implémenter assez rapidement un algorithme de correction avec la distance de Damerau-Levenshtein, avec de la programmation dynamique sur l'arbre. On note l'apparition éventuelle de suggestions duppliquées lorsqu'il y a plusieurs manières d'arriver au même mot en une édition, mais on s'en débarasse aisément.
 
 #figure(
   image("ex_3.png", width: 400pt),
@@ -147,6 +147,8 @@ Puis on peut implémenter assez rapidement un algorithme de correction avec la d
 )
 
 L'amélioration de la nouvelle structure, avec la fusion des noeuds simples (pour former des noeuds longs) permet de réduire l'espace nécessaire en passant de 32 Mo à 23 Mo, ainsi que les performances (0.7s pour L'Avare), grâce à mémoization de la racine également, temps qui passe à 0.4s si l'on mémoize le premier niveau de la trie (0.3s si on se passe d'afficher le texte dans le terminal). Cela fait 26828 mots en 0.3s, soit à peu près 90000 mots/seconde, ce qui est tout à fait respectable.
+
+Enlever certaines données inutiles (comme l'offset des feuilles) permet de passer ensuite de 23 Mo à 18 Mo (presque x0.5 !), et il n'y a plus que 2222668 noeuds (et heureusement le nombre de feuilles n'a pas changé...)
 
 #pagebreak()
 = Utilisation d'un réseau de neurones
