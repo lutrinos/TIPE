@@ -1,0 +1,60 @@
+{
+  "simple_join": {
+    "total_time": 1.8205642700195312,
+    "parsing_time": 0.17404556274414062,
+    "computation_time": 1.407623291015625,
+    "result_rows": 0
+  },
+  "batch_queries": {
+    "batch_time": 16.751527786254883,
+    "avg_total_time": 1.6643524169921875,
+    "avg_computation_time": 1.611471176147461,
+    "num_queries": 10,
+    "per_query_times": [
+      1.2128353118896484,
+      1.2371540069580078,
+      1.146554946899414,
+      1.0480880737304688,
+      1.7762184143066406,
+      2.1300315856933594,
+      2.086639404296875,
+      1.9917488098144531,
+      2.0041465759277344,
+      2.0101070404052734
+    ]
+  },
+  "scaling": {
+    "scaling": [
+      {
+        "size": 50,
+        "total_time": 0.9791851043701172,
+        "computation_time": 0.9093284606933594,
+        "result_rows": 14
+      },
+      {
+        "size": 100,
+        "total_time": 2.056598663330078,
+        "computation_time": 2.0122528076171875,
+        "result_rows": 114
+      },
+      {
+        "size": 200,
+        "total_time": 5.598783493041992,
+        "computation_time": 5.560159683227539,
+        "result_rows": 603
+      },
+      {
+        "size": 500,
+        "total_time": 34.554243087768555,
+        "computation_time": 34.497737884521484,
+        "result_rows": 11629
+      },
+      {
+        "size": 1000,
+        "total_time": 181.55741691589355,
+        "computation_time": 181.49161338806152,
+        "result_rows": 84594
+      }
+    ]
+  }
+}
