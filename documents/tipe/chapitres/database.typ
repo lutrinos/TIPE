@@ -81,7 +81,6 @@ Bien évidemment, un des buts sera de déterminer s'il existe un arbre de jointu
 
 Cette définition d'$alpha$-acyclicité ne va pas de soi...mais ce n'est pas là où il faut mettre l'accent.
 
-
 == Réduction Graham-Yu-Ozsoyoglu
 
 Les algorithmes décris dans cette partie proviennent en partie de @lecture2019. Il est intéressant de  remarquer que l'approche diffère légèrement de @duris2009 et @braultbaron2014 par la définition du procédé.  L'algorithme présenté est plus pratique dans le cadre théorique, l'implémentation différera légèrement pour des raisons de commodité.

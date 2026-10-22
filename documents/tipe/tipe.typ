@@ -35,6 +35,8 @@
 
 #include "chapitres/generalites.typ"
 
+#include "chapitres/algebre.typ"
+
 #include "chapitres/database.typ"
 //#include "chapitres/logique.typ"
 
@@ -42,4 +44,3 @@
 
 // ------------------- bibliography -------------------
 #bibliography("bibliography.bib")
-

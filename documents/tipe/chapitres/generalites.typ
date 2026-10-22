@@ -7,7 +7,7 @@
 #let bc = [$beta$-acyclicité]
 #let gc = [$gamma$-acyclicité]
 
-= Généralités
+= Généralités sur les hypergraphes
 
 La théorie des hypergraphes est une généralisation de la théorie des graphes, en particulier ceux non orientés, dans laquelle une arête peut relier plus de deux sommets entre eux. Les dessins ont l'avantage d'être proches, avec les arêtes ("hyperarêtes") représentées par des tracés fermés entourant les sommets.
 

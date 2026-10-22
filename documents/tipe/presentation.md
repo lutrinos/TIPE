@@ -97,6 +97,31 @@ $$ \bigcup_{i=0}^p E_i  = X $$
 Un arbre de jointure est quelque chose.
 
 ---
+# Base de données
+On va s'intéresser au schéma suivant :
+
+```sql
+CREATE TABLE communes (
+    INT id PRIMARY KEY,
+    INT region,
+    INT departement,
+    CHAR nom
+)
+
+CREATE TABLE departements (
+    INT id PRIMARY KEY,
+    INT region,
+    CHAR nom
+)
+
+CREATE TABLE regions (
+    INT id PRIMARY KEY,
+    INT cheflieu,
+    CHAR nom
+)
+```
+
+---
 <!-- _class: grid-tlr -->
 # Base de données
 
@@ -127,7 +152,7 @@ Un arbre de jointure est quelque chose.
 
 </div><div class="gtop">
 
-On va s'intéresser au schéma suivant :
+
 
 </div>
 
