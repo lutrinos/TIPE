@@ -1,8 +1,8 @@
 // global
-#import "./lib.typ": template
+#import "/lib.typ": template
 
 //local
-#import "customization/colors.typ": *
+#import "/customization/colors.typ": *
 
 
 #show: template.with(
@@ -42,5 +42,5 @@
 #include "chapter/appendix.typ"
 
 // ------------------- bibliography -------------------
-#bibliography("bibliography.bib")
+//#bibliography("bibliography.bib")
 

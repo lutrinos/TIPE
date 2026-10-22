@@ -1,4 +1,4 @@
-#import "../customization/great-theorems-customized.typ": *
+#import "/customization/great-theorems-customized.typ": *
 
 = Duals
 
@@ -40,8 +40,8 @@ Que se passe-t-il lorsqu'on prend un hypergraphe, puis que ses arêtes deviennen
 #proof[
   Cela découle de la définition directement. En effet, avec $M$ matrice d'adjacence de $H$ hypergraphe et $M'$ matrice d'adjacence de $H^*$,
   $
-    & M_(i,j) = 1                                 \
-    & ==> "le sommet" x_i "est dans l'arête" E_j  \
+    & M_(i,j) = 1 \
+    & ==> "le sommet" x_i "est dans l'arête" E_j \
     & ==> "le sommet" e_j "est dans l'arête " X_i \
     & ==> M'_(j, i) = 1
   $

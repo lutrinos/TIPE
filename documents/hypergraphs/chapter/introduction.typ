@@ -1,5 +1,5 @@
-#import "../customization/great-theorems-customized.typ": *
-#import "../customization/graph.typ": *
+#import "/customization/great-theorems-customized.typ": *
+#import "/customization/graph.typ": *
 
 = Introduction aux hypergraphes
 
@@ -35,7 +35,7 @@ $ abs(E_i) in {1, 2} $
 #example[
   Un hypergraphe connu#footnote[Proche de la représentation des reliques de la mort dans _Les Reliques de la Mort_ de la saga éponyme Harry Potter] est l'hypergraphe du plan de Fano.
 
-  #figure(image("../images/fano.png", width: 160pt), caption: [Hypergraphe du plan de Fano])
+  #figure(image("/images/fano.png", width: 160pt), caption: [Hypergraphe du plan de Fano])
 ]
 
 Cet hypergraphe contient 7 sommets numérotés de 0 à 6 donc $ X = {0, 1, 2, 3, 4, 5, 6} $
@@ -257,7 +257,7 @@ Attention, cette propriété n'est pas vraie pour un hypergraphe partiel ! Si on
 
 Considérons l'hypergraphe du plan de Fano, qu'on notera $F$.
 
-#figure(image("../images/fano.png", width: 160pt))
+#figure(image("/images/fano.png", width: 160pt))
 
 Tout d'abord, $F_((k))$ n'existe pas pour $k > 3$. Ensuite $F_((3)) = F$ car toutes les arêtes de $F$ sont de cardinal 3. Enfin, $ee_((2))$ est la famille parcourant l'ensemble des parties à un ou deux éléments de $bracket.l.double 0, 6 bracket.r.double$ donc
 $ F_((2)) = ({0, 1, 2, 3, 4, 5, 6}, ee_((2))) $
@@ -326,10 +326,10 @@ Encore une fois, on retrouve une définition du degré proche de celle sur les g
 #proof[
   On utilise le lemme précédent.
   $
-    sum_(s in X) d(s) & = sum_(s in X) sum_(E in H) bb(1)_E (s) " par le lemme"               \
+    sum_(s in X) d(s) & = sum_(s in X) sum_(E in H) bb(1)_E (s) " par le lemme" \
                       & = sum_(E in H) sum_(x in X) bb(1)_E (x) " car les sommes sont finies" \
-                      & = sum_(E in H) sum_(x in X inter E) 1                                 \
-                      & = sum_(E in H)sum_(x in E) 1 " car " E subset.eq X                    \
+                      & = sum_(E in H) sum_(x in X inter E) 1 \
+                      & = sum_(E in H)sum_(x in E) 1 " car " E subset.eq X \
                       & = sum_(E in H) abs(E) " par définition de " abs(E)
   $
 ]
@@ -343,7 +343,7 @@ Encore une fois, on retrouve une définition du degré proche de celle sur les g
   Direct avec la proposition précédente.
   $
     sum_(s in X) d(s) & = sum_(v in E) abs(v) \
-                      & = sum_(v in E) 2      \
+                      & = sum_(v in E) 2 \
                       & = 2 abs(E)
   $
 ]
@@ -439,8 +439,8 @@ Comme pour les graphes non orientés, la relations d'adjacence est réflexive et
   On a
   $
     & abs(E_i union E_j) = abs(E_i) + abs(E_j) - abs(E_i inter E_j) = abs(E_i) + abs(E_j) \
-    & <==> abs(E_i inter E_j) = 0                                                         \
-    & <==> E_i inter E_j = emptyset                                                       \
+    & <==> abs(E_i inter E_j) = 0 \
+    & <==> E_i inter E_j = emptyset \
     & <==> not (E_i " et " E_j "adjacentes")
   $
 ]

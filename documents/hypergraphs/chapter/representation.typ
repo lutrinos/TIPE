@@ -1,4 +1,4 @@
-#import "../customization/great-theorems-customized.typ": *
+#import "/customization/great-theorems-customized.typ": *
 
 = Représentation des hypergraphes
 
@@ -10,11 +10,11 @@ Lorsqu'on représente un graphe, on dessine dans un premier temps les sommets so
 
 L'illustration disponible sur Wikipédia utilise cette représentation de manière moins schématique que celle utilisée ici.
 
-#figure(image("../images/hyp_wiki.png", width: 200pt), caption: [Exemple de réprésentation d'hypergraphe (Wikipédia)])
+#figure(image("/images/hyp_wiki.png", width: 200pt), caption: [Exemple de réprésentation d'hypergraphe (Wikipédia)])
 
 Il est également possible de représenter les arêtes comme des lignes de couleurs, reliant entre eux toutes les sommets de l'arête.
 
-#figure(image("../images/hyp_line.png", width: 200pt), caption: [Exemple de représentation d'hypergraphe (lignes)])
+#figure(image("/images/hyp_line.png", width: 200pt), caption: [Exemple de représentation d'hypergraphe (lignes)])
 
 == Matrice d'adjacence
 

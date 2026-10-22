@@ -1,4 +1,4 @@
-#import "../customization/great-theorems-customized.typ": *
+#import "/customization/great-theorems-customized.typ": *
 #set heading(numbering: none) // Heading numbering
 
 
