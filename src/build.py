@@ -31,10 +31,10 @@ class Builder:
         source = open(self.path, "r", encoding=self.encoding)
 
         while line := source.readline():
-            result = self.decoder(line)
+            result = self.decoder(line, i)
+            i += 1
 
             if result != None:
-                i += 1
                 trie.insert(result[0], result[1])
 
                 if i % 10000 == 0:

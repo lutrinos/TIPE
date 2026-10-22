@@ -164,8 +164,26 @@ L'amélioration de la nouvelle structure, avec la fusion des noeuds simples (pou
 
 Enlever certaines données inutiles (comme l'offset des feuilles) permet de passer ensuite de 23 Mo à 18 Mo (presque x0.5 !), et il n'y a plus que 2222668 noeuds (et heureusement le nombre de feuilles n'a pas changé...)
 
+On peut ensuite potentiellement faire usage des n-grammes pour repérer la phonologie potentielle d'un mot écrit incorrectement et repérer les mots proches.
+
+Une autre approche pour tester l'appartenance d'un mot sont est le Bloom filter#footnote[https://en.wikipedia.org/wiki/Bloom_filter] (qui peux donner de faux positifs, mais jamais de faux négatifs) ou le BK Tree#footnote[https://en.wikipedia.org/wiki/BK-tree].
+
 #pagebreak()
 = Utilisation d'un réseau de neurones
+
+Il existe différents types de réseaux de neurones, en fonction du type de tâche à réaliser. Les critères nécessaire pour réaliser un correcteur grammatical sont:
+- entrées de taille variable
+- 
+
+Ceux nous intéressant sont les suivants :
+- Réseau de neurones récurrents (RNNs) et en particulier les réseaux récurrent à mémoire courte de long terme (LSTMs) ou les unités récurrentes fermées (GRU)
+- Transformeur, plus récent, plus rapide à entraîner et actuellement plus "populaire" que les RNN car ne sont pas obligé de commencer par le début du texte.
+
+== Tokenisation &  Embedding
+La première étape consiste à encoder l'ensemble des mots du corpus avant de le donner au réseau neuronal. Il faut que cette tokenisation soit cohérente afin de permettre de
+- conserver la catégorie grammaticale du mot pour repèrer les erreurs grammaticales (agencement des mots)
+- prendre en compte le sens pour affiner la suggestion de mots au vue de la phrase
+- conserver l'orthographe/la phonologie du mot pour repèrer des mots proche phonologiquement et orthographiquement
 
 #pagebreak()
 = Conclusion

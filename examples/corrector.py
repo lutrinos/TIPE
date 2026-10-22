@@ -7,15 +7,16 @@ convert = Converter("./data/mapping.csv")
 trie = Trie(convert, "./data/wiki.bin")
 
 while True:
-    sentence = input("\033[0;35m>>>\033[0;0m ")
+    sentence = utility.c_input()
     incorrect = []
-    def fix(pattern):
-        if trie.check(pattern.group(0).lower()):
-            return pattern.group(0)
-        incorrect.append(pattern.group(0))
-        return '\033[0;31m%s\033[0;0m' % pattern.group(0)
 
-    print(re.sub(r'(\w+)', fix, sentence))
+    def fix(word):
+        if trie.check(word):
+            return True
+        incorrect.append(word)
+        return False
+
+    utility.print_and_highlight("Corrigé", fix, sentence)
 
     for word in incorrect:
         print("-\033[0;31m", word, "\033[0;0m", '-->', ', '.join(trie.correct(word)))

@@ -59,7 +59,7 @@ class Chunk:
     __slots__ = [
         "nodes",
         "bytes",
-        "byte",
+        "byte"
     ]
 
     def __init__(self):
@@ -157,6 +157,7 @@ class TrieBuilder:
         # Ajout des métadonnées
         if is_end:
             file.write(self.metafile.tell().to_bytes(4))
+            self.metafile.write(node[-1])
 
         
         # Retourne un nouveau chunk si le noeud a des enfants
@@ -230,6 +231,8 @@ class TrieNode:
         "offset",
         "children",
 
+        "meta",
+
         # Internal state
         "i"
     ]
@@ -251,15 +254,29 @@ class TrieNode:
 
 
 class Trie:
-    def __init__(self, convert, path):
+
+    # Initialisation
+    def __init__(self, convert, path, metapath=None):
         self.convert = convert
-        file = open(path, "rb")
         self.index = 0
+
+        file = open(path, "rb")
         self.mmap = mmap.mmap(file.fileno(), length=0, access=mmap.ACCESS_READ)
+        
+        if metapath:
+            file = open(metapath, "rb")
+            try:
+                self.metadata = mmap.mmap(file.fileno(), length=0, access=mmap.ACCESS_READ)
+            except:
+                # Si le fichier est vide
+                self.metadata = []
         
         self.root = self.get_node(0)
         self.floor = { c: self.get_node(self.root.offset + self.root.children[c]) for c in self.root.chars() }
     
+    """
+    Méthodes d'accès à la trie
+    """
     def get_node(self, index):
         node = TrieNode()
         node.flag = self.mmap[index]
@@ -272,9 +289,9 @@ class Trie:
         # Si c'est un noeud long
         if node.flag & FLAGS.IS_LONG:
             node.p = self.mmap[index+2]
-            raw = self.mmap[index + 3: index + 7 + node.p + 3 * node.n]
+            raw = self.mmap[index + 3: index + 7 + node.p + 3 * node.n + (4 if node.is_word() else 0)]
         else:
-            raw = self.mmap[index + 2: index + 6 + 3 * node.n]
+            raw = self.mmap[index + 2: index + 6 + 3 * node.n + (4 if node.is_word() else 0)]
         
         offset = 0
 
@@ -290,28 +307,14 @@ class Trie:
 
         node.children = { raw[offset + node.p + i*3]: int.from_bytes(raw[offset + 1 + node.p + 3*i : offset + 3 + node.p + 3*i]) for i in range(node.n) }
 
+        if node.is_word():
+            node.meta = int.from_bytes(raw[offset + node.p + 3 * node.n : offset + node.p + 3 * node.n + 4])
+
         return node
 
-    def list(self):
-        self._list(self.root, "")
-    
-    def _list(self, node, prefix):
+    def get_meta(self, node):
         if node.is_word():
-            print(prefix)
-
-        for c in node.chars():
-            self._list(self.get_next(node, c), prefix + self.convert.get_char(c))
-
-    def stats(self):
-        print(self._stats(self.root, 0))
-    
-    def _stats(self, node, _):
-        value = 1 if node.is_word() else 0
-
-        for c in node.chars():
-            value += self._stats(self.get_next(node, c), 0)
-
-        return value
+            return self.metadata[node.meta]
     
     def get_next(self, node, char_index, new=True):
         if node is self.root:
@@ -339,6 +342,50 @@ class Trie:
                 return node
         return None
 
+    """
+    Méthodes utilitaires
+    """
+    def list(self):
+        self._list(self.root, "")
+    
+    def _list(self, node, prefix):
+        if node.is_word():
+            print(prefix)
+
+        for c in node.chars():
+            self._list(self.get_next(node, c), prefix + self.convert.get_char(c))
+
+    def stats(self):
+        print(self._stats(self.root, 0))
+    
+    def _stats(self, node, _):
+        value = 1 if node.is_word() else 0
+
+        for c in node.chars():
+            value += self._stats(self.get_next(node, c), 0)
+
+        return value
+    
+    def get_word(self, word):
+        node = self.root
+
+        for char in word:
+            i = self.convert.get_int(char)
+
+            if i == None:
+                return None
+            
+            node = self.get_next(node, i, False)
+
+            if node == None:
+                return None
+        
+        return node if node.is_word() else None
+        
+
+    """
+    Méthodes annexes - à séparer dans un avenir proche
+    """
     def check(self, word):
         return self._check(self.root, word)
 
@@ -367,7 +414,7 @@ class Trie:
             case _:
                 raise "Algorithme inconnu."
         
-    # Version 1 - Distance de Levensthein
+    # Version 1 - Distance de Levensthein-Demareau
     def _levenshtein(self, node, suffix, distance=0):
         results = []
 
@@ -422,3 +469,5 @@ class Trie:
                 )
             )
         return results
+
+    
