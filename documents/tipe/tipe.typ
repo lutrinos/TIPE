@@ -1,7 +1,6 @@
-// global
-#import "/customization/lib.typ": template
+#import "@preview/datify:1.0.0": *
 
-//local
+#import "/customization/lib.typ": template
 #import "/customization/colors.typ": *
 
 #let font = "New Computer Modern"
@@ -12,7 +11,7 @@
   // personal/subject related stuff
   author: "Nathan TILLIER",
   title: "Hypergraphes acycliques et résolution de contraintes",
-  date: "Septembre 2025",
+  date: custom-date-format(datetime.today(), pattern: "long", lang: "fr"),
 
   // formatting settings
   body-font: font,
