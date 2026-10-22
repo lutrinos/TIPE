@@ -1,0 +1,54 @@
+#import "../customization/great-theorems-customized.typ": *
+
+= Représentation des hypergraphes
+
+Il existe différentes manières de réprésenter un hypergraphe avec un schéma et en mémoire. On introduit également ici le graphe représentatif d'un hypergraphe, amenant à la notion de dual.
+
+== Représentation graphique
+
+Lorsqu'on représente un graphe, on dessine dans un premier temps les sommets sous forme de points dans l'espace, avant de relier les sommets entre eux pour chaque arête du graphe. Toutefois, quand on considère un hypergraphe, une arête relie plus de deux sommets, donc un segment reliant deux sommets ne suffit pas. On représente donc une arête par une surface recouvrant les sommets qu'elle relie, comme le suggère les représentations précédentes. Il s'agit sans doute de la repésentation la plus intuitive parce qu'étant la plus proche de celle des graphes.
+
+L'illustration disponible sur Wikipédia utilise cette représentation de manière moins schématique que celle utilisée ici.
+
+#figure(image("../images/hyp_wiki.png", width: 200pt), caption: [Exemple de réprésentation d'hypergraphe (Wikipédia)])
+
+Il est également possible de représenter les arêtes comme des lignes de couleurs, reliant entre eux toutes les sommets de l'arête.
+
+#figure(image("../images/hyp_line.png", width: 200pt), caption: [Exemple de représentation d'hypergraphe (lignes)])
+
+== Matrice d'adjacence
+
+Tout comme les graphes, on peut représenter un hypergraphe sous la forme d'une matrice d'adjacence.
+
+#definition(title: "Matrice d'adjacence")[
+  Soit $H$ un hypergraphe sur $X$. On appelle matrice d'adjacence de $H$ la matrice $cal(A)$ telle que
+  $ forall a_(i,j) in cal(A), a_(i,j) = cases(1 " si " v_i in E_j, 0 " sinon") $
+  Avec $n = abs(X)$ et $m = abs(H)$, on a donc $cal(A) in cal(M)_(n,m)({0,1})$
+]
+
+Ainsi, les lignes correspondent aux sommets et indiquent si le sommet $v_i$ est dans l'arête $E_j$,  tandis que les colonnes correspondent aux arêtes.
+
+De plus, on remarque qu'il n'y a pas de perte d'information : pour un nombre d'arêtes donné une matrice correspond de manière unique à un hypergraphe.
+
+#question[
+  Il y a-t-il des propriétés particulières reliant les matrices d'adjacences avec les hypergraphes ? (graphes simples, r-uniforme...)
+]
+
+== Graphe représentatif
+
+Cette partie permet de faire (partiellement) le pont entre les graphes et hypergraphes.
+
+#definition(title: "Graphe représentatif")[
+  Soit un hypergraphe $H = (E_1, E_2, ..., E_p)$ sur $X$. Son _graphe représentatif_ $L(H)$ est le graphe dont les sommets sont des points $e_1, e_2, ..., e_p$ représentant respectivement lesarêtes de $H$ et tels que $e_i$ est relié à $e_j$ si et seulement si
+  $ E_i inter E_j != emptyset $
+]
+
+#theorem[
+  Tout graphe est graphe représentatif  d'un hypergraphe linéaire, _i.e_ donc les arêtes sont d'intersection non vide deux-à-deux.
+]
+
+#theorem(title: "Graphe représentatif d'un graphe simple - Beineke")[
+  Un graphe est le graphe représentatif d'un certain graphe simple s'il ne contient aucun des  sous-graphes induits suivants.
+
+  _Écrire les neufs sous-graphes induits._
+]

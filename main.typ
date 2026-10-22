@@ -32,7 +32,8 @@
 
 // ------------------- content -------------------
 #include "chapter/introduction.typ"
-
+#include "chapter/representation.typ"
+#include "chapter/coloration.typ"
 #include "chapter/appendix.typ"
 
 // ------------------- bibliography -------------------

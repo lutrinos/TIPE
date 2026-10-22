@@ -5,7 +5,7 @@
 
 La théorie des hypergraphes est un généralisation de la théorie des graphes (non orientés) où une arête peut relier plus de deux sommets entre eux. Par exemple, dans un hypergraphe, 4 sommets peuvent tout à fait être relié par une seule arête.
 
-== Définitions fondamentales
+== Premières définitions
 
 Dans le cadre de la théorie des hypergraphes, on appelle les arêtes des hyperarêtes, même si on fera souvent un abus de language en les appelant arêtes comme pour un graphe.
 
@@ -29,10 +29,7 @@ $ abs(E_i) in {1, 2} $
 #example[
   Un hypergraphe connu est l'hypergraphe du plan de Fano.
 
-  #figure(
-    image("../images/fano.png", width: 160pt),
-    caption: [Hypergraphe du plan de Fano],
-  )
+  #figure(image("../images/fano.png", width: 160pt), caption: [Hypergraphe du plan de Fano])
 ]
 
 Cet hypergraphe contient 7 sommets numérotés de 0 à 6 donc $ X = {0, 1, 2, 3, 4, 5, 6} $
@@ -164,6 +161,123 @@ En revanche, il n'est pas 3-complet, car il y a $binom(4, 3) = 4$ arêtes de car
   Comme $H$ parcourt l'ensemble des parties de $X$ à $r$ éléments, chaque partie est placée une unique fois dans $H$, donc $i = j$ et $(X, H)$ est bien simple donc r-uniforme.
 ]
 
+Pour un hypergraphe $(X, H)$ considéré, on peut lui retirer des sommets ou des arêtes. On définit un hypergraphe partiel issu d'un hypergraphe auquel on a a retiré des arêtes.
+
+#definition(title: "Hypergraphe partiel")[
+  Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle hypergraphe partiel de $H$ engendré par un ensemble $J subset.eq { 1,2, ..., p }$ la famille
+  $ H_J = (E_j | j in J) $
+]
+
+Puis un sous-hypergraphe (d'un hypergraphe auquel on a retiré des sommets).
+
+#definition(title: "Sous-hypergraphe")[
+  Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle sous-hypergraphe de $H$ induit par un ensemble $A subset.eq X$ la famille
+  $ H_A = (E_j | E_j subset.eq A " pour " 1 <= j <= p) $
+]
+
+Nous avons _in fine_ les quelques propositions suivantes.
+
+#proposition[
+  Tout sous-hypergraphe de $H$ hypergraphe simple est simple.
+]
+
+#proof[
+  La propriété est vraie sur ${1, 2, ..., abs(H)}$ donc en particulier sur $J subset.eq {1, 2, ..., abs(H)}$
+]
+
+Attention, cette propriété n'est pas vraie pour un hypergraphe partiel ! Si on retire le noeud $v_3$ le graphe ci-dessous n'est plus simple.
+
+#hypergraph(
+  nodes: (
+    (0, 0),
+    (1, 0),
+    (2, 0),
+    (2, 1),
+  ),
+  edges: (
+    (0, 1, 2),
+    (1, 2, 3),
+  ),
+  gap: 40pt,
+)
+
+#proposition[
+  Tout sous-hypergraphe d'un hypergraphe uniforme reste uniforme.
+]
+
+#proof[
+  Toutes les arêtes ont le même cardinal, ce qui reste vrai si on enlève une arête. S'il ne reste plus d'arête, alors la propriété reste également vraie.
+]
+
+#corollary[
+  Tout sous-hypergraphe d'un hypergraphe r-uniforme est r-uniforme.
+]
+
+#proof[
+  Conséquence logique des deux propositions précédentes.
+]
+
+== Propriétés sur les sommets
+
+Tout comme dans les graphes, on peut définir le degré d'un sommet d'un hypergraphe avec la notion d'étoile centrée en un sommet.
+
+#definition(title: "Degré")[
+  Soit $x in X$, on appelle étoile centrée en $x$ l'hypergraphe partiel de $H$ formé des arêtes contenant $x$, qu'on note $H(x)$.
+
+  Le degré du sommet $x$ est alors $ d_H (x) = abs(H(x)) $
+]
+
+Encore une fois, on retrouve une définition du degré proche de celle sur les graphes, il s'agit du nombre d'arêtes dont un des extrémités est $x$ (même si une hyperarête a en quelque sorte plusieurs extrémités). Toutefois, à la différence des graphes, on ne peut pas définir de degré sortant ou de degré entrant car les arêtes ne sont pas orientées. On peut en proposer une reformulation qui nous sera plus utile par la suite.
+
+#lemma[
+  Soit $H$ un hypergraphe sur $X$ et $x in X$. On a
+  $ d_H (x) = sum_(E in H) bb(1)_E (x) $
+]
+
+#proof[
+  On a d'après la définition
+  $ H(x) = (E_i | x in E_i, E_i in H) $
+  Donc le degré dans $H$ de $x$ vaut
+  $ d_H (x) = sum_(E in H \ x in E) 1 $
+  Or
+  $ bb(1)_E (x) = cases(1 " si " x in E, 0 " sinon") $
+  Et
+  $
+    d_H (x) & = sum_(E in H \ x in E) 1 + sum_(E in H \ x in.not E) 0 \
+            & = sum_(E in H) bb(1)_H (x)
+  $
+]
+
+#proposition[
+  Soit $H$ un hypergraphe sur $X$, alors
+  $ sum_(s in X) d(s) = sum_(E in H) abs(E) $
+]
+
+#proof[
+  On utilise le lemme précédent.
+  $
+    sum_(s in X) d(s) & = sum_(s in X) sum_(E in H) bb(1)_E (s) " par le lemme"               \
+                      & = sum_(E in H) sum_(x in X) bb(1)_E (x) " car les sommes sont finies" \
+                      & = sum_(E in H) sum_(x in X inter E) 1                                 \
+                      & = sum_(E in H)sum_(x in E) 1 " car " E subset.eq X                    \
+                      & = sum_(E in H) abs(E) " par définition de " abs(E)
+  $
+]
+
+#corollary[
+  Avec $G = (V, E)$ un graphe, alors
+  $ sum_(s in X) d(s) = 2 abs(E) $
+]
+
+#proof[
+  Direct avec la proposition précédente.
+  $
+    sum_(s in X) d(s) & = sum_(v in E) abs(v) \
+                      & = sum_(v in E) 2      \
+                      & = 2 abs(E)
+  $
+]
+
 #theorem(title: "Théorème de Sperner")[
   Soit $H$ un hypergraphe simple d'ordre $n$ sur $X$, alors
   $ sum_(E in H) binom(n, abs(E))^(-1) <= 1 $
@@ -225,101 +339,9 @@ Dans un graphe, cette propriété donne une majoration intéressante du nombre d
   $ abs(E_i) = 2 $
   Par la première inégalité du théorème de Sperner
   $
-    sum_(E in H) binom(abs(V), abs(E))^(-1) &= sum_(E in H) binom(abs(V), 2)^(-1) \ &= abs(E) binom(abs(V), 2)^(-1) <= 1
+    sum_(E in H) binom(abs(V), abs(E))^(-1) & = sum_(E in H) binom(abs(V), 2)^(-1) \
+                                            & = abs(E) binom(abs(V), 2)^(-1) <= 1
   $
   Soit
   $ abs(E) <= binom(abs(V), 2) $
 ]
-
-Pour un hypergraphe $(X, H)$ considéré, on peut lui retirer des sommets ou des arêtes. On définit un hypergraphe partiel issu d'un hypergraphe auquel on a a retiré des arêtes.
-
-#definition(title: "Hypergraphe partiel")[
-  Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle hypergraphe partiel de $H$ engendré par un ensemble $J subset.eq { 1,2, ..., p }$ la famille
-  $ H_J = (E_j | j in J) $
-]
-
-Puis un sous-hypergraphe (d'un hypergraphe auquel on a retiré des sommets).
-
-#definition(title: "Sous-hypergraphe")[
-  Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle sous-hypergraphe de $H$ induit par un ensemble $A subset.eq X$ la famille
-  $ H_A = (E_j | E_j subset.eq A " pour " 1 <= j <= p) $
-]
-
-Nous avons _in fine_ les quelques propositions suivantes.
-
-#proposition[
-  Tout sous-hypergraphe de $H$ hypergraphe simple est simple.
-]
-
-#proof[
-  La propriété est vraie sur ${1, 2, ..., abs(H)}$ donc en particulier sur $J subset.eq {1, 2, ..., abs(H)}$
-]
-
-Attention, cette propriété n'est pas vraie pour un hypergraphe partiel ! Si on retire le noeud $v_3$ le graphe ci-dessous n'est plus simple.
-
-#hypergraph(
-  nodes: (
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (2, 1),
-  ),
-  edges: (
-    (0, 1, 2),
-    (1, 2, 3),
-  ),
-  gap: 40pt,
-)
-
-#proposition[
-  Tout sous-hypergraphe d'un hypergraphe uniforme reste uniforme.
-]
-
-#proof[
-  Toutes les arêtes ont le même cardinal, ce qui reste vrai si on enlève un arête. S'il ne reste plus d'arête, alors la propriété reste également vraie.
-]
-
-#corollary[
-  Tout sous-hypergraphe d'un hypergraphe r-uniforme est r-uniforme.
-]
-
-== Propriétés sur les sommets
-
-Tout comme dans les graphes, on peut définir le degré d'un sommet d'un hypergraphe avec la notion d'étoile centrée en un sommet.
-
-#definition(title: "Degré")[
-  Soit $x in X$, on appelle étoile centrée en $x$ l'hypergraphe partiel de $H$ formé des arêtes contenant $x$, qu'on note $H(x)$.
-
-  Le degré du sommet $x$ est alors $ d_H (x) = m(H(x)) $
-]
-
-Encore une fois, on retrouve une définition du degré proche de celle sur les graphes, il s'agit du nombre d'arêtes dont un des extrémités est $x$ (même si une hyperarête a en quelque sorte plusieurs extrémités).
-
-#proposition[
-  Soit $H$ un hypergraphe sur $X$, alors
-  $ sum_(s in X) d(s) = sum_(E in H) abs(E) $
-]
-
-#proof[
-
-]
-
-#corollary[
-  Avec $G = (V, E)$ un graphe, alors
-  $ sum_(s in X) d(s) = 2 abs(E) $
-]
-
-#proof[
-
-]
-
-== Hypergraphes particuliers
-
-Certains hypergraphes possèdent des caractéristiques particulières qu'on peut retrouver régulièrement.
-
-
-== Représentations
-
-
-
-== Propriétés
