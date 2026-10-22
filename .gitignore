@@ -1,3 +1,4 @@
 legacy/ressources/*
 legacy/data/*
 __pycache__
+typst.toml

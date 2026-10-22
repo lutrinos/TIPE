@@ -3,7 +3,7 @@
 
 = Introduction aux hypergraphes
 
-La théorie des hypergraphes est un généralisation de la théorie des graphes (non orientés) où une arête peut relier plus de deux sommets entre eux. Par exemple, dans un hypergraphe, 4 sommets peuvent tout à fait être relié par une seule arête.
+La théorie des hypergraphes est une généralisation de la théorie des graphes (des graphes non orientés plus particulièrement) où une arête peut relier plus de deux sommets entre eux. Par exemple, dans un hypergraphe, 4 sommets peuvent tout à fait être relié par une seule arête.
 
 == Premières définitions
 
@@ -17,7 +17,7 @@ Dans le cadre de la théorie des hypergraphes, on appelle les arêtes des hypera
 Les éléments de $X$ sont les sommets, et les éléments de la famille $H$ sont les arêtes de l'hypergraphe.
 
 #remark[
-  Il existe une autre définition d'un hypergraphe plus contraignante. \
+  Il existe une autre définition#footnote[Donnée notamment par Claude Berge, ancien directeur de recherches au CNRS, dans son ouvrage _Graphes et hypergraphes_] d'un hypergraphe plus contraignante. \
   Un hypergraphe est alors une paire ordonnée $(X,H)$ telle que $X$ soit un ensemble et $H$ une famille de sous-ensemble non vides de $X$ recouvrant $X$:
   $ union.big_(i=1)^p E_i = X $
   Un hypergraphe n'a donc, avec cette définition, aucun sommet isolé.
@@ -344,4 +344,12 @@ Dans un graphe, cette propriété donne une majoration intéressante du nombre d
   $
   Soit
   $ abs(E) <= binom(abs(V), 2) $
+]
+
+== Retour sur la terminologie
+
+#definition("Adjacence")[
+  Soit $(X, H)$ un hypergraphe
+  - $x,y in X$ sont dit adjacents s'il existe une arête $E_i$ les contenant tout deux $ exists i, {x, y} subset.eq E_i $
+  - $E_i, E_j in H$ sont dit adjacents si leur intersection est non nulle $ E_i inter E_j != emptyset $
 ]

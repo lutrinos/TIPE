@@ -8,3 +8,4 @@
 - Droite définie sur un hypergraphe
 - Trou d'un hypergraphe (avec la parité / imparité)
 - Famille de Sperner
+- Graphe k-représentatif
