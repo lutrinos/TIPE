@@ -3,7 +3,7 @@
 
 = Introduction aux hypergraphes
 
-La théorie des hypergraphes est une généralisation de la théorie des graphes (des graphes non orientés plus particulièrement) où une arête peut relier plus de deux sommets entre eux. Par exemple, dans un hypergraphe, 4 sommets peuvent tout à fait être relié par une seule arête.
+La théorie des hypergraphes est une généralisation de la théorie des graphes (des graphes non orientés plus particulièrement) où une arête peut relier plus de deux sommets entre eux. Par exemple, dans un hypergraphe, 4 sommets peuvent tout à fait être relié par une seule et même arête.
 
 == Premières définitions
 
@@ -11,29 +11,35 @@ Dans le cadre de la théorie des hypergraphes, on appelle les arêtes des hypera
 
 #definition(title: "Hypergraphe")[
   Soit $X = { x_1, x_2, ..., x_n }$ un ensemble fini. Un hypergraphe sur $X$ est une famille $H = (E_1, E_2, ..., E_p)$ de parties de $X$ avec :
-  $ forall in bracket.l.double 1, p bracket.r.double, E_i != emptyset $
+  1. $ forall i in bracket.l.double 1, p bracket.r.double, E_i != emptyset $
+  2. $ union.big_(i=1)^p E_i = X $
 ]
 
 Les éléments de $X$ sont les sommets, et les éléments de la famille $H$ sont les arêtes de l'hypergraphe.
 
+En outre, $X$ est *fini*, ce qui implique qu'on ne s'intéressera pas à une généralisation des graphes infinis.
+
 #remark[
-  Il existe une autre définition#footnote[Donnée notamment par Claude Berge, ancien directeur de recherches au CNRS, dans son ouvrage _Graphes et hypergraphes_] d'un hypergraphe plus contraignante. \
-  Un hypergraphe est alors une paire ordonnée $(X,H)$ telle que $X$ soit un ensemble et $H$ une famille de sous-ensemble non vides de $X$ recouvrant $X$:
-  $ union.big_(i=1)^p E_i = X $
-  Un hypergraphe n'a donc, avec cette définition, aucun sommet isolé.
+  Cette définition#footnote[Donnée notamment par Claude Berge, ancien directeur de recherches au CNRS, dans son ouvrage _Graphes et hypergraphes_] est assez contraignante. On peut en trouver une autre (sur Wikipédia notamment) ne mentionnant pas la seconde condition.
+
+  Un hypergraphe n'a donc, avec la définition précédente, aucun sommet isolé.
 ]
 
-Dès lors, un graphe est un hypergraphe dont toutes les arêtes relient deux sommets (non nécessairement différents si on autorise la présence de boucles), soit pour tout $i$
+Dès lors, un graphe est un hypergraphe dont toutes les arêtes relient deux sommets exactement (non nécessairement différents si on autorise la présence de boucles), soit pour tout $i$
 $ abs(E_i) in {1, 2} $
 
+#remark[
+  On trouve parfois la notation $ H = (X; E_1, ..., E_m) $
+]
+
 #example[
-  Un hypergraphe connu est l'hypergraphe du plan de Fano.
+  Un hypergraphe connu#footnote[Proche de la représentation des reliques de la mort dans _Les Reliques de la Mort_ de la saga éponyme Harry Potter] est l'hypergraphe du plan de Fano.
 
   #figure(image("../images/fano.png", width: 160pt), caption: [Hypergraphe du plan de Fano])
 ]
 
 Cet hypergraphe contient 7 sommets numérotés de 0 à 6 donc $ X = {0, 1, 2, 3, 4, 5, 6} $
-Et les arêtes sont ici représentées par des droites et cercles, soit $ H = { {0,1,3}, {0,4,5}, {0,2,6}, {1,2,4}, {3,4,6}, {3,2,5}, {5,1,6} } $
+Et les arêtes sont ici représentées par des droites et cercles, ce qui donne $ H = { {0,1,3}, {0,4,5}, {0,2,6}, {1,2,4}, {3,4,6}, {3,2,5}, {5,1,6} } $
 
 On définit ensuite certaines notations relatives aux hypergraphes.
 
@@ -46,7 +52,7 @@ On définit ensuite certaines notations relatives aux hypergraphes.
 ]
 
 #remark[
-  On retrouve les même notions d'ordre et de nombre d'arête que pour les graphes, auxquelles on a ajouté le rang et l'anti-rang d'un hypergraphe, qui caractérisent des propriétés portant sur les arêtes.
+  On retrouve les même notions d'ordre et de nombre d'arête que pour les graphes, auxquelles on a ajouté le rang et l'anti-rang d'un hypergraphe, qui caractérisent des propriétés portant sur les arêtes dans ce cadre précis.
 ]
 
 Prenons l'hypergraphe $(X, H)$ suivant.
@@ -73,7 +79,7 @@ Ses noeuds sont numérotés de 0 à 5, il a donc 6 noeuds et est d'ordre 6. Il a
 
 #proposition[
   Pour tout graphe $(X,H)$ avec $H$ non vide, on a l'inégalité suivante.
-  $ 1 <= s(H) <= r(H) <= abs(H) $
+  $ 1 <= s(H) <= r(H) <= abs(X) = n(H) $
 ]
 
 #proof[
@@ -97,6 +103,12 @@ Par exemple, l'hypergraphe du plan de Fano est un hypergraphe simple : aucune ar
   Cette définition est cohérente avec celle des graphes simples pour lesquels il y a au plus une arête entre deux sommets, à la différence des multigraphes.
 ]
 
+Ainsi, tout graphe simple est un hypergraphe simple.
+
+#proof[
+  Soit $G = (V, E)$ un graphe simple, supposant qu'il existe $e_i$ et $e_j$ arêtes liant $x_p$ et $x_q$ sommets de $G$. Alors $e_i$ = $e_j$ (égalité d'ensembles, non de 2-uplets) et en particulier $e_i subset e_j$ ce qui correspond à la définition donnée.
+]
+
 #definition(title: "Hypergraphe uniforme et complet")[
   Pour un hypergraphe $H$ sur $X$, on dit que $H$ est _uniforme_ si toutes ses arêtes ont le même cardinal $ r(H) = s(H) $
   On dit de plus qu'il est _r-uniforme_ si $H$ est simple uniforme de rang $r$.
@@ -108,8 +120,18 @@ Par exemple, l'hypergraphe du plan de Fano est un hypergraphe simple : aucune ar
   Pour $r=2$, on retrouve la définition de graphe complet (pour deux sommets _u_ et _v_ quelconques il existe une arête reliant _u_ et _v_).
 ]
 
+D'ailleurs la notation est la même !
+
+#lemma[
+  Pour $0 <= r <= n$, $ abs(K_n^r) = binom(n, r) $
+]
+
+#proof[
+  L'emsemble des parties de $X$ de cardinalité $r$ contient $binom(abs(x), r)$ éléments.
+]
+
 #reminder[
-  Attention, il faut que l'hypergraphe soit simple dans la définition de r-uniforme ! Si on a égalité du rang et de l'anti-rang il faut que tout les éléments de $H$ soient deux à deux différents (qu'il n'y ait pas d'arêtes dupliquées).
+  Attention, il faut que l'hypergraphe soit simple dans la définition de r-uniforme ! Si on a égalité du rang et de l'anti-rang il faut que tout les éléments de $H$ soient deux à deux différents (qu'il n'y ait pas d'arêtes dupliquées comme toutes les arêtes ont le même cardinal).
 ]
 
 L'hypergraphe ci-dessous est 3-uniforme par exemple, ses deux arêtes (verte et rouge) sont toutes deux de cardinal 3.
@@ -147,6 +169,8 @@ En revanche, il n'est pas 3-complet, car il y a $binom(4, 3) = 4$ arêtes de car
   opacity: 0%,
 )
 
+Ces hypergraphes deviennent par contre rapidement illisible...
+
 #proposition[
   Tout graphe r-complet est r-uniforme.
 ]
@@ -156,19 +180,19 @@ En revanche, il n'est pas 3-complet, car il y a $binom(4, 3) = 4$ arêtes de car
   $ r(H)= s(H) $
   Il s'agit donc de montrer qu'il est simple. Soit $i, j in bracket.l.double 1, abs(H) bracket.r.double$ tel que
   $ E_i subset.eq E_j $
-  Toutes les arêtes sont de cardinal $r$ donc
+  Toutes les arêtes sont de cardinal $r$ donc par égalité des cardinaux (ce sont des ensembles finis)
   $ E_i = E_j $
   Comme $H$ parcourt l'ensemble des parties de $X$ à $r$ éléments, chaque partie est placée une unique fois dans $H$, donc $i = j$ et $(X, H)$ est bien simple donc r-uniforme.
 ]
 
-Pour un hypergraphe $(X, H)$ considéré, on peut lui retirer des sommets ou des arêtes. On définit un hypergraphe partiel issu d'un hypergraphe auquel on a a retiré des arêtes.
+== Hypergraphes partiels et sous-hypergraphes
+
+Pour un hypergraphe $(X, H)$ considéré, on peut lui retirer des sommets ou des arêtes. On définit un hypergraphe partiel issu d'un hypergraphe auquel on a a retiré des arêtes, puis un sous-hypergraphe (d'un hypergraphe auquel on a retiré des sommets).
 
 #definition(title: "Hypergraphe partiel")[
   Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle hypergraphe partiel de $H$ engendré par un ensemble $J subset.eq { 1,2, ..., p }$ la famille
   $ H_J = (E_j | j in J) $
 ]
-
-Puis un sous-hypergraphe (d'un hypergraphe auquel on a retiré des sommets).
 
 #definition(title: "Sous-hypergraphe")[
   Soit $H = (E_1, E_2, ..., E_p)$ un hypergraphe sur $X$. On appelle sous-hypergraphe de $H$ induit par un ensemble $A subset.eq X$ la famille
@@ -236,8 +260,8 @@ Encore une fois, on retrouve une définition du degré proche de celle sur les g
 
 #proof[
   On a d'après la définition
-  $ H(x) = (E_i | x in E_i, E_i in H) $
-  Donc le degré dans $H$ de $x$ vaut
+  $ H(x) = (E_i | x in E_i, 1 <= i <= abs(H)) $
+  Donc le degré de $x$ dans $H$ vaut
   $ d_H (x) = sum_(E in H \ x in E) 1 $
   Or
   $ bb(1)_E (x) = cases(1 " si " x in E, 0 " sinon") $
@@ -306,6 +330,10 @@ Encore une fois, on retrouve une définition du degré proche de celle sur les g
 
 On remarque d'ailleurs que ces limites peuvent être atteintes dans des cas particuliers, avec par exemple $H = K_(2n)^n$ (ou $H = K_(2n+1)^(n+1)$).
 
+La seconde inégalité peut se comprendre de la manière suivante : étant donné un ensemble $X$, comment faire pour maximiser le nombre d'arêtes en gardant un hypergraphe simple ? Intuitivement, on peut procéder de deux manières différentes :
+- rajouter toutes les arêtes possibles puis enlever celles qui empêchent le plus d'autres arêtes pour conserver la propriété de simplicité. On se rend alors compte qu'un hypergraphe complet avec un nombre intermédiaire d'arêtes est optimal
+- rajouter des arêtes de même cardinal au fur et à mesure pour parcourir toutes les possibilités. On construit alors un hypergraphe complet, qui est optimal lorsque les arêtes ont un cardinal encore une fois "intermédiaire".
+
 Par exemple, avec $K_4^2$ on obtient le graphe complet suivant.
 
 #hypergraph(
@@ -327,7 +355,7 @@ Par exemple, avec $K_4^2$ on obtient le graphe complet suivant.
   opacity: 20%,
 )
 
-Dans un graphe, cette propriété donne une majoration intéressante du nombre d'arêtes.
+Dans un graphe, cette propriété donne une majoration intéressante et assez intuitive du nombre d'arêtes.
 
 #corollary[
   Soit $G = (V, E)$ un graphe sans boucle ni arêtes multiples, alors
@@ -351,5 +379,11 @@ Dans un graphe, cette propriété donne une majoration intéressante du nombre d
 #definition("Adjacence")[
   Soit $(X, H)$ un hypergraphe
   - $x,y in X$ sont dit adjacents s'il existe une arête $E_i$ les contenant tout deux $ exists i, {x, y} subset.eq E_i $
-  - $E_i, E_j in H$ sont dit adjacents si leur intersection est non nulle $ E_i inter E_j != emptyset $
+  - $E_i, E_j in H$ sont dit adjacents si leur intersection est non nulle (autrement dit s'ils ont un sommet en commun) $ E_i inter E_j != emptyset $
+]
+
+Comme pour les graphes non orientés, la relations d'adjacence est réflexive et symétrique.
+
+#question[
+  Qu'en est-il de l'union de 2 (ou plus) arêtes ?
 ]

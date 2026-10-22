@@ -28,7 +28,21 @@ Tout comme les graphes, on peut représenter un hypergraphe sous la forme d'une 
 
 Ainsi, les lignes correspondent aux sommets et indiquent si le sommet $v_i$ est dans l'arête $E_j$,  tandis que les colonnes correspondent aux arêtes.
 
-De plus, on remarque qu'il n'y a pas de perte d'information : pour un nombre d'arêtes donné une matrice correspond de manière unique à un hypergraphe.
+De plus, on remarque qu'il n'y a pas de perte d'information : pour un nombre d'arêtes donné une matrice correspond de manière unique à un hypergraphe (à condition qu'il n'y ait ni de ligne ni de colonne nulle).
+
+#proposition[
+  L'ensemble des hypergraphes sur $X = {x_1, ..., x_n}$ à $m$ arêtes est en bijection avec $cal(M)_(n.m) ({0, 1})$
+]
+
+#proof[
+  On pose $A$ l'ensemble des hypergraphes sur $X = {x_1, ..., x_n}$ à $m$ arêtes, et on considère $phi : A --> cal(M)_(n,m) ({0,1})$ associant à un hypergraphe sa matrice d'adjacence. Montrons que $phi$ est bijective.
+
+  Injection : Soient $H$, $H'$ deux hypergraphes tels que $phi(H) = phi(H') = M$. Alors $H$ et $H'$ ont les mêmes arêtes reliant les même sommets, donc pour tout $i$, $E_i = E'_i$ et $H = H'$.
+
+  Surjection : Pour $M in cal(M)_(n,m) ({0,1})$, on construit juste le graphe qui lui correspond.
+]
+
+_Note : C'est juste une formalisation de l'idée._
 
 #question[
   Il y a-t-il des propriétés particulières reliant les matrices d'adjacences avec les hypergraphes ? (graphes simples, r-uniforme...)
@@ -39,7 +53,7 @@ De plus, on remarque qu'il n'y a pas de perte d'information : pour un nombre d'a
 Cette partie permet de faire (partiellement) le pont entre les graphes et hypergraphes.
 
 #definition(title: "Graphe représentatif")[
-  Soit un hypergraphe $H = (E_1, E_2, ..., E_p)$ sur $X$. Son _graphe représentatif_ $L(H)$ est le graphe dont les sommets sont des points $e_1, e_2, ..., e_p$ représentant respectivement lesarêtes de $H$ et tels que $e_i$ est relié à $e_j$ si et seulement si
+  Soit un hypergraphe $H = (E_1, E_2, ..., E_p)$ sur $X$. Son _graphe représentatif_ $L(H)$ est le graphe dont les sommets sont des points $e_1, e_2, ..., e_p$ représentant respectivement les arêtes de $H$ et tel que $e_i$ est relié à $e_j$ si et seulement si
   $ E_i inter E_j != emptyset $
 ]
 
@@ -47,8 +61,16 @@ Cette partie permet de faire (partiellement) le pont entre les graphes et hyperg
   Tout graphe est graphe représentatif  d'un hypergraphe linéaire, _i.e_ donc les arêtes sont d'intersection non vide deux-à-deux.
 ]
 
+#proof[
+  À faire.
+]
+
 #theorem(title: "Graphe représentatif d'un graphe simple - Beineke")[
   Un graphe est le graphe représentatif d'un certain graphe simple s'il ne contient aucun des  sous-graphes induits suivants.
 
   _Écrire les neufs sous-graphes induits._
+]
+
+#proof[
+  À faire
 ]
