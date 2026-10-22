@@ -72,6 +72,10 @@ Bien évidemment, un des buts sera de déterminer s'il existe un arbre de jointu
 
 La généralisation de l'acyclicité aux hypergraphes est ambigüe : réaliser un cycle revient essentiellement à partir d'un sommet avant de revenir sur lui-même sans "repartir en  arrière". Comme toute généralisation qui se respecte, la restriction de la condition d'acyclicité sur un hypergraphe doit rester valide dans le cadre d'un graphe non orienté.
 
+#remark[
+  Les définitions suivantes proviennent de la thèse de David Duris @duris2009, soutenue en 2009 donc relativement ancienne.
+]
+
 Plusieurs définition de l'acyclicité ont donc vu le jour : l'#ac, la #bc, la #gc et la Berge-acyclicité. Il est important de noter ces définitions de sont pas équivalentes ! Notamment,
 
 #align(center)[
