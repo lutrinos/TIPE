@@ -120,8 +120,10 @@ C'est moins performant que le système précédent pour 100 mots (0.005s vs 0.00
 On obtient un résultat assez intéressant même si il est perfectible : 
 #figure(
   image("ex_1.png", width: 200pt),
-  caption: [Premiers tests]
+  caption: [Correction]
 )
+
+En revanche il fonctionne assez bien sur des textes beaucoup plus longs, tel _L'Avare_ de Molière.
 
 Ensuite, cela permet de calculer quelques statistiques sur le corpus.
 - Il contient à présent 1859114 mots
@@ -136,6 +138,13 @@ Ensuite, cela permet de calculer quelques statistiques sur le corpus.
 - Les occurences des bigrammes dans les mots
 - Les occurences des trigrammes dans les mots
 - Les préfixes avec plus de 10 ou 4 enfants
+
+Puis on peut implémenter assez rapidement un algorithme de correction avec la distance de Levenshtein, avec de la programmation dynamique sur l'arbre. On note l'apparition de suggestions duppliquées lorsqu'il y a plusieurs manières d'arriver au même mot en une édition.
+
+#figure(
+  image("ex_3.png", width: 400pt),
+  caption: [Correction et suggestions]
+)
 
 #pagebreak()
 = Utilisation d'un réseau de neurones

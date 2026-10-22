@@ -134,7 +134,9 @@ class TrieBuilder:
                 current_queue = next_queue
                 next_queue = []
         self.override()
-        
+
+def concat(v, arr):
+    return [v + i for i in arr]        
 
 class TrieNode:
     __slots__ = [
@@ -220,9 +222,10 @@ class Trie:
         
 
     def check(self, word):
-        node = self.get_node(0)
+        return self._check(self.get_node(0), word)
 
-        for k in word:
+    def _check(self, node, suffix):
+        for k in suffix:
             i = self.convert.get_int(k)
             if i is None:
                 return False
@@ -232,17 +235,36 @@ class Trie:
             if index is None:
                 return False
             node = self.get_node(index)
-
         return node.flag & 1 == 1
 
+    # Version 1 - Levensthein distance
+    def correct(self, word, distance=1):
+        if self.check(word):
+            return []
+        return self._correct(self.get_node(0), word, distance)
 
+    def _correct(self, node, suffix, distance=0):
+        results = []
 
+        # Si la distance est nulle, seulement le suffixe peut convenir
+        if distance == 0: return [suffix] if self._check(node, suffix) else []
 
+        # Si le suffixe est nul, le noeud actuel peut convenir ou tous les mots suivants de distance inférieure
+        if len(suffix) == 0:
+            if node.flag & 1 == 1: results.append("")
+            for i, index in node.children: results.extend(concat(self.convert.get_char(i), self._correct(self.get_node(node.offset + index), suffix, distance - 1)))
+            return results
+        
+        # Sinon, on teste toutes les possibilités possibles
+        k = self.convert.get_int(suffix[0])
+        suffix2 = suffix[1:]
 
+        # Délétion (pour corriger le mot)
+        results.extend(self._correct(node, suffix2, distance - 1))
 
+        # Substitution / insertion (pour corriger le mot)
+        for i, index in node.children:
+            results.extend(concat(self.convert.get_char(i), self._correct(self.get_node(node.offset + index), suffix2, distance if i == k else distance - 1)))
+            results.extend(concat(self.convert.get_char(i), self._correct(self.get_node(node.offset + index), suffix, distance - 1)))
 
-
-
-
-
-
+        return results
