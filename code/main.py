@@ -161,7 +161,6 @@ class Instance:
         vus = set()
         return self.join_dfs(arbre, query, vus, 0)
 
-    # Passage bottom -> up
     # Passage bottom -> up (Remontée des contraintes vers la racine)
     def bottom_up(self, query: Query, node: JoinNode):
         for child in node.children:
@@ -171,7 +170,6 @@ class Instance:
             if len(variables) > 0:
                 node.semi_join(child) # Élimination des tuples du parent sans correspondance (bottom-up)
 
-    # Passage top -> down
     # Passage top -> down (Propagation des contraintes vers les feuilles)
     def top_down(self, query: Query, node: JoinNode):
         for child in node.children:

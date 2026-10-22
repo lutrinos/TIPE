@@ -359,7 +359,7 @@ JOIN commune as cheflieu ON commune.numero = departement.cheflieu
 # Statistiques
 
 <center>
-    <img height="400px" src="./images/stats_join_count.png" />
+    <img height="500px" src="./images/stats_join_count_bis.png" />
 </center>
 
 

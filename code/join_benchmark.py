@@ -1,7 +1,7 @@
 from main import Instance, Table, Query, Head, Atom
 import time
 from random import randint
-from math import floor, ceil, inf, pow, sqrt
+from math import floor, ceil, inf, sqrt
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,8 +50,8 @@ r3 = Query(
     Atom("d", v3, _, _)
 )
 
-density = 0.8 # Pour x1, x2 : pour chaque valeur, pourcentage moyen d'éléments ayant la même valeur
-boundaries = list(range(100000, 1000000, 50000)) # Bornes supérieures de la base de données
+density = 0.2 # Pour x1, x2 : pour chaque valeur, pourcentage moyen d'éléments ayant la même valeur
+boundaries = list(range(10000, 1000000, 10000)) # Bornes supérieures de la base de données
 
 def fill_up_to(n: int):
     start = len(a.rows)
@@ -84,7 +84,7 @@ def stats(q: Query):
         duration += (end - start) / n
     
     # racine de l'erreur quadratique moyenne (incertitude type)
-    return (size, duration, sqrt(sum(pow(x-duration, 2) for x in values) / n))
+    return (size + 4 * len(a.rows), duration, sqrt((sum((x-duration)*(x-duration) for x in values) / (n-1))))
 
 # Obtention des valeurs
 s1 = []
@@ -115,17 +115,17 @@ def scatter(s, c, n):
     x = getx(s)
     y = gety(s)
 
-    #b, a = np.polyfit(x, y, deg=1)
+    b, a = np.polyfit(x, y, deg=1)
 
-    ax.scatter(x, y, c=c, marker="+", label=f"{n} join")
-    #ax.plot(x, [a+b*v for v in x], c=c)
-    ax.errorbar(x, y, yerr=geterror(s), c=c)
+    ax.scatter(x, y, c=c, label=f"{n} join", marker="+")
+    ax.plot(x, [a+b*v for v in x], c=c)
+    ax.errorbar(x, y, yerr=geterror(s), c=c, linestyle="None")
 
 scatter(s1, "red", 1)
 scatter(s2, "blue", 2)
 scatter(s3, "green", 3)
 
-ax.set_xlabel("Taille de la base de données")
+ax.set_xlabel("Taille de la base de données + Taille du résultat")
 ax.set_ylabel("Temps de calcul (s)")
 
 plt.grid()
