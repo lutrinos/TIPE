@@ -1,42 +1,75 @@
 from utils import monitor
-from classes.trie import Trie
-
-# Retourne le mot correspondant à une ligne
-# On suppose que ce n'est pas un commentaire
-def get_word(line):
-    for i in range(len(line)):
-        if not line[i].isalpha():
-            return line[0:i]
-    return None
+from classes.trie import Trie, TrieBuilder
+import json
+from classes.converter import Converter
+import re
 
 
-trie = Trie()
+# from pympler import asizeof, classtracker
+
+# tr = classtracker.ClassTracker()
+# # tr.track_object(trie)
+# tr.track_class(Trie)
+# tr.create_snapshot()
 
 
-def read(file):
-    m = monitor("Reading original")
-    count = 0
+convert = Converter("./data/mapping.csv")
 
-    with open(file, encoding="latin-1") as f:
-        while line := f.readline():
-            if line[0] != '#':
-                word = get_word(line)
-                if word:
-                    trie[word] = "----------------------------------"
-            # if count % 100000 == 0:
-            #     print(count, get_word(line))
-            count += 1
-    print(count)
-    m()
+"""
+builder =  TrieBuilder(convert)
 
-read("./ressources/lefff-2.1.txt")
+# Lecture
+m = monitor("Lecture")
 
-m = monitor("Saving")
-trie.save("./saved.txt")
+i = 0
+with open("/run/media/nathan/UEBOAT/Wiki/kaikki.org-dictionary-Français.jsonl", "r") as f:
+    while ligne := f.readline():
+        i += 1
+        objet = json.loads(ligne)
+        builder.insert(objet["word"], 0)
+        if i % 10000 == 0:
+            print(i)
 m()
 
-trie2 = Trie()
-
-m = monitor("Loading 2")
-trie2.load("./saved.txt")
+# Sauvegarde
+m = monitor("Sauvegarde")
+builder.build("./test.bin")
+#trie.save("./data/wiki.bin")
 m()
+"""
+
+trie = Trie(convert, "./test.bin")
+
+"""
+f = open("./ressources/l_avare.txt", "r")
+
+m = monitor("Correction")
+
+for line in f:
+    print(
+        re.sub(r'(\w+)', lambda p: p.group(0) if trie.check(p.group(0).lower()) else '\033[0;31m%s\033[0;0m' % p.group(0), line)
+    )
+
+m()
+
+f.close()
+"""
+
+f = open("./ressources/l_avare.txt", "r")
+
+words = re.split(r'\W+', f.read())
+words = words[:100]
+print(len(words), "mots")
+
+m = monitor("Performance")
+for i in words: trie.check(i.lower())
+m()
+
+
+#trie.stats()
+
+#while True:
+#    sentence = input("\033[0;35m>>>\033[0;0m ")
+#    print(
+#        re.sub(r'(\w+)', lambda p: p.group(0) if trie.check(p.group(0).lower()) else '\033[0;31m%s\033[0;0m' % p.group(0), sentence)
+#    )

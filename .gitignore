@@ -1,2 +1,5 @@
 ressources/*
+data/*
+test.bin
+extrait.txt
 __pycache__

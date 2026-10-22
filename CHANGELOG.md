@@ -1,3 +1,14 @@
+# 26 avril 2025
+- Découverte d'une bibiothèque Python assez pouvant potentiellement permettre de parser le Lefff proprement https://github.com/Ars-Linguistica/PyLFG
+- Attention, Elex est aussi le nom d'un format pour le résultat d'élection, utilisé par l'Associated Press et le New-York Times
+- Il existe des dumps entiers de wikipédia, les télécharger pour lancer une analyse complète avec un outil dédié pourrair être assez intéressant https://dumps.wikimedia.org/backup-index.html ou https://github.com/WikiTeam/wikiteam/blob/master/wikipediadownloader.py
+- Il y a également déjà des dépôt de code ayant extrait les données https://github.com/tatuylonen/wiktextract
+- Le Lexique383 contient environ 142000 mots et est très riche, le Lefff 1.2M de mots, relativement complet mais difficile à comprendre la structure. Il semble qu'il y ait 6.5M de pages sur le wiktionnaire (dont 0.5M mots en tant que tel, et tout bien structuré), qui est très complet mais il reste à voir ce qu'on peut en sortir...
+
+# 12 avril 2025
+- Découverte du format du Lefff (enfin !) avec le dépôtde code situé à https://gitlab.inria.fr/gguibon/alexina-tools, ça ne va pas être de la tarte...
+- Téléchargement du Leff v3.4 (2.1 précédemment), ilne semble pas qu'il y ait de version ultérieure
+
 # 9 avril 2025
 - Découverte (par hasard) de BERT https://en.wikipedia.org/wiki/BERT_(language_model)
 
