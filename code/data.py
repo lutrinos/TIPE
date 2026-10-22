@@ -7,17 +7,14 @@ import time
 
 class Table:
     name: str           # Nom de la table
-    labels: set         # En-tête
-    rows: List          # Lignes
+    labels: list[str]   # En-tête
+    rows: list          # Lignes
     id: int             # Identifiant
-
-    original: list[str]
 
     def __init__(self, name):
         self.name = name
         self.rows = []
-        self.labels = set()
-        self.Tuple = namedtuple(name, [])
+        self.labels = []
     
     @property
     def len(self):
@@ -29,32 +26,31 @@ class Table:
         with open(path, mode='r') as file:
             csv = reader(file)
 
-            self.original = csv.__next__()
-            self.labels = set(self.original)
-            self.Tuple = namedtuple(self.name, self.original)
+            self.labels = csv.__next__()
 
             for line in csv:
-                self.rows.append(self.Tuple(*line))
+                self.rows.append(tuple(line))
     
-    # labels: [("from", "to")]
-    def project(self, labels: list[tuple[str, str]], validate, mutate=False):
-        old_labels = [old for old, _ in labels]
-        new_labels = [new for _, new in labels]
+    # labels: [True si réutilisé sinon False]
+    def project(self, selection: list[bool], validate, mutate=False):
+        switch = []
 
-        self.Tuple = namedtuple(self.name, new_labels)
+        for i, b in enumerate(selection):
+            if b:
+                switch.append(i)
 
         dedup = set()
         for row in self.rows:
             if validate(row):
-                dedup.add(self.Tuple(*[row.__getattribute__(i) for i in old_labels]))
+                dedup.add(tuple(row[i] for i in switch))
         
         if mutate:
-            self.labels = set(new_labels)
+            self.labels = [self.labels[i] for i in switch]
             self.rows = list(dedup)
             return self
         else:
             t = Table(self.name)
-            t.labels = set(new_labels)
+            t.labels = [self.labels[i] for i in switch]
             t.rows = list(dedup)
             return t
     
@@ -131,80 +127,90 @@ class Instance:
         vus = set()
         return self.join_dfs(arbre, query, vus, 0)
 
-    def semi_join(self, query: Query, node_a: JoinNode, node_b: JoinNode, vars: set[str], update_labels=False):
+    def semi_join(self, node_a: JoinNode, node_b: JoinNode, vars: set[str]):
         values = set()
         ordered_vars = list(vars)
 
         for row in node_b.table.rows:
-            values.add(tuple(row.__getattribute__(v) for v in ordered_vars))
+            values.add(tuple(row[node_b.atom.record[v]] for v in ordered_vars))
         
-        if update_labels:
-            node_a.table = node_a.table.project(
-                [(node_a.atom.record[v], v) for v in vars.union(query.head.vars).intersection(node_a.atom.vars)],
-                lambda row: tuple(row.__getattribute__(node_a.atom.record[v]) for v in ordered_vars) in values
-            )
-        else:
-            node_a.table = node_a.table.project(
-                [(v, v) for v in vars.union(query.head.vars).intersection(node_a.atom.vars)],
-                lambda row: tuple(row.__getattribute__(v) for v in ordered_vars) in values
-            )
+        
+        node_a.table = node_a.table.project(
+            [v in node_a.atom.vars for v in node_a.atom.original],
+            lambda row: tuple(row[node_a.atom.record[v]] for v in ordered_vars) in values
+        )
+
+        arr = []
+        for v in node_a.atom.original:
+            if v != '_':
+                node_a.atom.record[v] = len(arr)
+                arr.append(v)
+        node_a.atom.original = tuple(arr)
+        node_a.atom.vars = set(v for v in arr)
 
     
-    def bottom_up(self, query: Query, node: JoinNode, root=False):
-        if root:
-            node.table = node.table.project(
-                [(node.atom.record[v], v) for v in node.atom.vars],
-                lambda _: True
-            )
+    def bottom_up(self, query: Query, node: JoinNode):
         for child in node.children:
             self.bottom_up(query, child)
 
             vars = node.atom.vars.intersection(child.atom.vars)
             if len(vars) > 0:
-                self.semi_join(query, child, node, vars, True)
+                self.semi_join(child, node, vars)
     
     def top_down(self, query: Query, node: JoinNode):
         for child in node.children:
             vars = node.atom.vars.intersection(child.atom.vars)
 
             if len(vars) > 0:
-                self.semi_join(query, node, child, vars)
+                self.semi_join(node, child, vars)
             self.top_down(query, child)
     
-    def full_join(self, res_a: List, res_b: List, var_a: set[str], var_b: set[str], Tuple):
-        vars = list(var_a.intersection(var_b))
+    def patch_rows(self, row_a, row_b, selection: list[tuple[bool, int]]):
+        return tuple(row_a[i] if a else row_b[i] for a, i in selection)
+
+    def full_join(self, head: Head, res: List, res_child: List, node: JoinNode, child: JoinNode, strict=False):
+        vars = list(node.atom.vars.intersection(child.atom.vars))
         index = defaultdict(list)
+
+        selection = []
+        original = []
         
-        for row in res_a:
-            key = tuple(row.__getattribute__(v) for v in vars)
+        for v in (head.vars if strict else node.atom.vars.union(child.atom.vars)):
+            if v in node.atom.vars or v in child.atom.vars:
+                a = v in node.atom.vars
+                original.append(v)
+                selection.append(
+                    (a, node.atom.record[v] if a else child.atom.record[v])
+                )
+            else:
+                raise InterruptedError(v + " non présent lors de la jointure.")
+        
+        for row in res:
+            key = tuple(row[node.atom.record[v]] for v in vars)
             index[key].append(row)
         
         result = []
-        for row in res_b:
-            key = tuple(row.__getattribute__(v) for v in vars)
+        for row_child in res_child:
+            key = tuple(row_child[child.atom.record[v]] for v in vars)
 
             if key in index:
-                for row2 in index[key]:
-                    t = Tuple()
-                    # for f in Tuple._fields:
-                    #     if row.__hasattr__():
-                    #         break
-                    #     t.__setattr__(f, row.__getattribute__(f) or row2.__getattribute__(f))
-                    # for v a.append(row2.__getattribute__())
-                    # data = list(row)
-                    # data.extend(list(row2))
-                    # result.append(Tuple(*[row.__getattribute__(v) if v in var_b else row2.__getattribute__(v) for v in Tuple._fields]))
+                for row in index[key]:
+                    result.append(self.patch_rows(row, row_child, selection))
+
+        node.atom.vars = node.atom.vars.union(child.atom.vars)
+        node.atom.original = tuple(original)
+        node.atom.record = { v:i for i, v in enumerate(original) }
 
         return result
+    
 
-    def compute(self, node: JoinNode, Tuple: type[tuple]):
+    def compute(self, head: Head, node: JoinNode, strict=False):
         result = node.table.rows
 
-        for child in node.children:
-            child_result = self.compute(child, Tuple)
-            #vars = node.atom.vars.intersection(child.atom.vars)
-            result = self.full_join(result, child_result, node.atom.vars, child.atom.vars, Tuple)
-        
+        for i, child in enumerate(node.children):
+            child_result = self.compute(head, child)
+            if len(child_result) > 0:
+                result = self.full_join(head, result, child_result, node, child, strict and i == len(node.children) - 1)
         return result
     
     def query(self, query: Query):
@@ -215,25 +221,18 @@ class Instance:
                 raise InterruptedError(atom.name + " non présent dans les tables.")
             if len(atom.original) != len(self.tables[atom.name].labels):
                 raise InterruptedError("Nombre de colonnes non correspondant dans la table " + atom.name)
-            
-            for i, v in enumerate(atom.original):
-                if v != '_':
-                    atom.record[v] = self.tables[atom.name].original[i]
 
         # Création de l'arbre de jointure
         jointree = self.jointure(query)
 
-        # Création du type réponse
-        Tuple = namedtuple(query.head.name, query.head.vars, defaults=(None,) * len(query.head.vars))
-
         # Premier passage
-        self.bottom_up(query, jointree, True)
+        self.bottom_up(query, jointree)
 
         # Deuxième passage
         self.top_down(query, jointree)
 
         # On fait le join
-        return self.compute(jointree, Tuple)
+        return self.compute(query.head, jointree, strict=True)
 
 
 """
@@ -275,7 +274,7 @@ r = Query(
     Head("requête", nom_com, nom_dep, nom_reg),
     Atom("commune", _, _, num_reg, num_dep, _, _, _, _, _, nom_com, _, _),
     Atom("département", num_dep, _, _, _, _, _, nom_dep),
-    Atom("région", _, _, _, _, _, nom_reg)
+    Atom("région", num_reg, _, _, _, _, nom_reg)
 )
 
 start = time.time()

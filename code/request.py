@@ -4,14 +4,14 @@ class Atom:
     name: str                   # Nom de la table de l'atome
     index: int                  # Indice de l'atome
     vars: set[str]              # Variables présentes dans l'atome
-    record: dict[str, str]      # Annuaire variable-colonne
+    record: dict[str, int]      # Annuaire variable-colonne
 
     original: tuple[str]
 
     def __init__(self, name, *vars):
         self.name = name
         self.vars = set(vars)
-        self.record = dict()
+        self.record = { v:i for i, v in enumerate(vars) }
         self.original = vars
 
         self.vars.discard('_')
