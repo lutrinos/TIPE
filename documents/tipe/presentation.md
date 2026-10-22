@@ -7,6 +7,7 @@ footer: Calcul de requêtes dans une base de données
 paginate: true
 lang: fr
 math: mathjax
+size: 4:3
 ---
 
 <!-- _class: title -->
@@ -74,7 +75,7 @@ Une base de données est un ensemble de relations (tables). Le coût majeur des 
 On fait un produit cartésien. **Problème :** Explosion combinatoire de la taille intermédiaire.
 
 <!-- Vide pour alléger. Numéros à côté pour voir la correspondance -->
-|commune.id|commune.nom|commune.departement|departement.id|departement.nom|
+|com.id|com.nom|com.departement|dep.id|dep.nom|
 |-|-|-|-|-|
 |1|Paris|75|75|Île-de-France|
 ||||29|Finistère|
@@ -116,7 +117,7 @@ WHERE c.nom LIKE "Le %"
 
 
 ---
-# Requête conjonctive acyclique
+# Requête conjonctive
 
 **Requête conjonctive acyclique**
 ```sql
@@ -174,9 +175,9 @@ JOIN region AS r ON d.region = r.id
 
 **Définition : arbre de jointure d'une requête**
 Graphe $T$ vérifiant
+- $T$ est un arbre
 - les sommets de $T$ sont les relations de la requête
 - le sous-graphe induit par les relations contenant une même variable partagée est connexe
-- $T$ est un arbre
 
 </div>
 
@@ -479,7 +480,7 @@ Courbes avec beaucoup plus de résultats finaux (d = 0.8)
 
 
 ---
-# Python versus C
+# Python / C
 
 <center>
     <img height="550px" src="./images/python_vs_c.png" />
@@ -487,7 +488,7 @@ Courbes avec beaucoup plus de résultats finaux (d = 0.8)
 
 
 ---
-# Python versus C
+# Python / C
 
 <center>
     <img height="550px" src="./images/python_vs_c_2.png" />
@@ -497,7 +498,7 @@ Courbes avec beaucoup plus de résultats finaux (d = 0.8)
 
 
 ---
-# Hypergraphe d'une requête
+# Hypergraphes et requêtes
 
 **Définition**
 $$ q(x_1, ..., x_n) :- R_1(\vec{y_1}), ..., R_p  (\vec{y_p}) $$
@@ -672,7 +673,7 @@ def est_acyclique(self):
 
 **Éléments de preuve (complexité)**
 - Afin d'obtenir la complexité souhaitée, on montre qu'aucun résultat intermédiaire ne peut être plus grand qu'un polynôme en la taille de l'entrée et de la sortie. On considère un noeud $R_i$ avec pour enfants $S_1, ..., S_n$ dans un arbre de jointure correspondant à une requête.
-- Cet noeud $R_i$ (noeud dans l'arbre de jointure) sera remplacé par un noeud $R_i^J = \pi_{Y \cup Z} (T)$ où $Y = \text{vars}(R_i)$ et $Z = \text{head}(q) \setminus Y$ et $T = R_i \bowtie S_1 \bowtie ... \bowtie S_n$
+- Ce noeud $R_i$ (noeud dans l'arbre de jointure) sera remplacé par un noeud $R_i^J = \pi_{Y \cup Z} (T)$ où $Y = \text{vars}(R_i)$ et $Z = \text{head}(q) \setminus Y$ et $T = R_i \bowtie S_1 \bowtie ... \bowtie S_n$
 - Puisque $Y$ et $Z$ sont disjoints, $\pi_{Y\sqcup Z}(T) \subseteq \pi_Y (T) \times \pi_Z (T)$. On remarque que $\pi_Y (T)$ est de taille bornée par celle de $R_i$, et que $\pi_Z (T)$ l'est par la taille de la sortie (car l'exploration se fait dans l'ordre postfixe, donc on a déjà réduit les _dangling tuples_).
 
 

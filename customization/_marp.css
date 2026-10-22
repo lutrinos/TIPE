@@ -4,7 +4,7 @@
 * @auto-scaling true
 * @size 16:9 1280px 720px
 * @size fhd 1920px 1080px
-* @size 4:3 false
+ * @size 4:3 960px 720px
 */
 
 @import "default";
@@ -35,10 +35,13 @@ img[alt~="title-bg"] {
 }
 
 section {
+    /* width: 960px;
+    height: 720px; */
     background: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 18pt;
+    font-size: 16pt;
     font-weight: 400;
+    /* padding: 145px 80px 68px 80px; */
     padding: 145px 80px 68px 80px;
     background-size: contain;
 }

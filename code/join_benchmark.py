@@ -51,7 +51,7 @@ r3 = Query(
 )
 
 density = 0.2 # Pour x1, x2 : pour chaque valeur, pourcentage moyen d'éléments ayant la même valeur
-boundaries = list(range(10000, 1000000, 10000)) # Bornes supérieures de la base de données
+boundaries = list(range(100000, 1000000, 100000)) # Bornes supérieures de la base de données
 
 def fill_up_to(n: int):
     start = len(a.rows)

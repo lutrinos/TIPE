@@ -29,9 +29,6 @@ class Table:
 
             self.columns = csv.__next__()
             self.rows.extend([tuple(line) for line in csv])
-    
-    def export_to(self, path: str):
-        print("TO DO")
 
     # Projection et sélection
     def project(self, selection: List[bool], validate):
@@ -50,7 +47,7 @@ class Table:
         self.rows = list(dedup)
 
     def __repr__(self):
-        return f"Table(labels={self.columns}, rows_count={len(self.rows)})"
+        return f"Table(name={self.name}, labels={self.columns}, rows_count={len(self.rows)})"
 
     def print(self):
         print("Labels ", self.columns)

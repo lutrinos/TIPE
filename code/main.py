@@ -6,6 +6,12 @@ from typing import Dict, List, Self, Set
 from table import Table
 from hyper import Arete, Hyper
 from request import Atom, Head, Query
+from rbloom import Bloom
+
+import struct
+
+def tuple_to_bytes(t):
+    return struct.pack("q", hash(t))
 
 class JoinNode:
     atom: Atom              # Atome du noeud
@@ -46,13 +52,24 @@ class JoinNode:
     def semi_join(self, node: Self):
         intersection = sorted(self.variables.intersection(node.variables))
 
-        index = set(
-            tuple(row[node.record[v]] for v in intersection) for row in node.table.rows
+        # index = set(
+        #     tuple(row[node.record[v]] for v in intersection) for row in node.table.rows
+        # )
+
+        index = Bloom(expected_items=node.table.len, false_positive_rate=0.001)
+
+        index.update(
+            map(
+                tuple_to_bytes,
+                [tuple(
+                    row[node.record[v]] for v in intersection
+                ) for row in node.table.rows]
+            )
         )
 
         self.table.project(
             [v in self.variables for v in self.table.columns],
-            lambda row: tuple(row[self.record[v]] for v in intersection) in index
+            lambda row: tuple_to_bytes(tuple(row[self.record[v]] for v in intersection)) in index
         )
 
         # Mise à jour des colonnes (ne garder que les variables, pas les "_")

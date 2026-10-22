@@ -6,7 +6,7 @@
 
 *Slide 4* : Relations/Tables, schéma SQL, importance du coût de la jointure.
 
-*Slide 5* : Produit cartésien, explosion combinatoire, données intermédiaires inutiles.
+*Slide 5* : Produit cartésien, explosion combinatoire, données intermédiaires inutiles, ordre de grandeur.
 
 *Slide 6* : Définition (AND), SQL simple, limite (pas de LIKE complexe/négation).
 
