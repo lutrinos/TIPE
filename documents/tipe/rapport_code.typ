@@ -1,4 +1,34 @@
 
+// Configuration codly (coloration syntaxique) et lovelace (pseudocode)
+#import "@preview/lovelace:0.3.0": *
+#import "@preview/codly:1.3.0": *
+#import "@preview/codly-languages:0.1.1": *
+#show: codly-init.with()
+
+#set text(size: 8pt)
+
+#codly(
+  radius: 0pt,
+  zebra-fill: none,
+  languages: codly-languages,
+)
+
+#let code(..args, body) = figure(
+  kind: "algorithm",
+  supplement: "Algorithme",
+  caption: args.named().at("title"),
+
+  pseudocode-list(
+    booktabs: true,
+    title: args.named().at("title"),
+    line-numbering: none,
+    indentation: 1.4em,
+    line-gap: 0.8em,
+    body,
+  ),
+)
+
+
 == Code
 
 === Hypergraphe

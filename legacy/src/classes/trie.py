@@ -396,6 +396,7 @@ class Trie:
     # Vérification de suffixe
     def _check(self, node, suffix):
         node = node.copy()
+
         for char in suffix:
             i = self.convert.get_int(char)
 
@@ -406,7 +407,27 @@ class Trie:
 
             if node == None:
                 return False
+
         return node.is_word()
+
+    def is_valid_prefix(self, word):
+        return self._is_valid_prefix(self.root, word)
+
+    def _is_valid_prefix(self, node, suffix):
+        node = node.copy()
+
+        for char in suffix:
+            i = self.convert.get_int(char)
+
+            if i == None:
+                return False
+            
+            node = self.get_next(node, i, False)
+
+            if node == None:
+                return False
+                
+        return True
 
     # Suggestion de mots
     def correct(self, word, algorithm="levenshtein", distance=1):
