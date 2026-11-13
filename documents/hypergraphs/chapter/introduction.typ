@@ -11,7 +11,7 @@ Dans le cadre de la théorie des hypergraphes, on appelle les arêtes des hypera
 
 #definition(title: "Hypergraphe")[
   Soit $X = { x_1, x_2, ..., x_n }$ un ensemble fini. Un hypergraphe sur $X$ est une famille $H = (E_1, E_2, ..., E_p)$ de parties de $X$ avec :
-  1. $ forall i in bracket.l.double 1, p bracket.r.double, E_i != emptyset $
+  1. $ forall i in [| 1, p |], E_i != emptyset $
   2. $ union.big_(i=1)^p E_i = X $
 ]
 
@@ -93,7 +93,7 @@ On introduit la notion d'hypergraphe simple généralisant celle de graphe simpl
 
 #definition(title: "Hypergraphe simple")[
   Un hypergraphe simple sur $X$ est un hypergraphe $H = (E_1, E_2, ..., E_p)$ dont aucune arête n'en contient une autre. \
-  Autrement dit, pour tout $i, j in bracket.l.double 1, p bracket.r.double$
+  Autrement dit, pour tout $i, j in [| 1, p |]$
   $ E_i subset E_j /*" ou " E_j subset E_j*/ ==> i = j $
 ]
 
@@ -178,7 +178,7 @@ Ces hypergraphes deviennent par contre rapidement illisible...
 #proof[
   Dans tout graphe r-complet, $H$ est l'ensemble des parties de $X$ de cardinalité $r$, donc toutes ses arêtes sont de cardinal $r$ et en particulier
   $ r(H)= s(H) $
-  Il s'agit donc de montrer qu'il est simple. Soit $i, j in bracket.l.double 1, abs(H) bracket.r.double$ tel que
+  Il s'agit donc de montrer qu'il est simple. Soit $i, j in [| 1, abs(H) |]$ tel que
   $ E_i subset.eq E_j $
   Toutes les arêtes sont de cardinal $r$ donc par égalité des cardinaux (ce sont des ensembles finis)
   $ E_i = E_j $
@@ -248,7 +248,7 @@ Attention, cette propriété n'est pas vraie pour un hypergraphe partiel ! Si on
 #definition(title: [$k$-section])[
   Soit $k in NN^*$, la $k$-section de l'hypergraphe $H = (X, ee)$ est le couple formé par l'ensemble $X$ et la famille d'ensembles
   $
-    ee_((k)) = { F | F subset X "tel que" abs(F) in bracket.l.double 1, k bracket.r.double "et" F subset E_i "pour" E_i in ee }
+    ee_((k)) = { F | F subset X "tel que" abs(F) in [| 1, k |] "et" F subset E_i "pour" E_i in ee }
   $
 
   On note la $k$-section de $H$
@@ -259,7 +259,7 @@ Considérons l'hypergraphe du plan de Fano, qu'on notera $F$.
 
 #figure(image("/images/fano.png", width: 160pt))
 
-Tout d'abord, $F_((k))$ n'existe pas pour $k > 3$. Ensuite $F_((3)) = F$ car toutes les arêtes de $F$ sont de cardinal 3. Enfin, $ee_((2))$ est la famille parcourant l'ensemble des parties à un ou deux éléments de $bracket.l.double 0, 6 bracket.r.double$ donc
+Tout d'abord, $F_((k))$ n'existe pas pour $k > 3$. Ensuite $F_((3)) = F$ car toutes les arêtes de $F$ sont de cardinal 3. Enfin, $ee_((2))$ est la famille parcourant l'ensemble des parties à un ou deux éléments de $[| 0, 6 |]$ donc
 $ F_((2)) = ({0, 1, 2, 3, 4, 5, 6}, ee_((2))) $
 Et
 $ F_((1)) = ({0, 1, 2, 3, 4, 5, 6}, {0}, {1}, {2}, {3}, {4}, {5}, {6}) $
@@ -356,7 +356,7 @@ Encore une fois, on retrouve une définition du degré proche de celle sur les g
 ]
 
 #proof[
-  On considère $E$ partie quelconque de $X$ fixée, et $sigma$ une permutation de $bracket.l.double 1, abs(X) bracket.r.double$ dans $X$. On dit que $sigma$ débute par $E$ si
+  On considère $E$ partie quelconque de $X$ fixée, et $sigma$ une permutation de $[| 1, abs(X) |]$ dans $X$. On dit que $sigma$ débute par $E$ si
   $ E = { sigma(i) | 1 <= i <= abs(E) } $
   Comme l'hypergraphe $H$ est simple, une même permutation $sigma$ ne peut pas débuter par deux parties $E_i$ et $E_j$ distinctes de $H$ (par l'absurde, on peut prendre $abs(E_i) <= abs(E_j)$ et $E_i subset E_j => i = j$).
 
@@ -409,7 +409,7 @@ Dans un graphe, cette propriété donne une majoration intéressante et assez in
 ]
 
 #proof[
-  Soit $G = (V, E)$ graphe (vu comme un hypergraphe) sans boucle, pour tout $i in bracket.l.double 1, abs(E) bracket.r.double$,
+  Soit $G = (V, E)$ graphe (vu comme un hypergraphe) sans boucle, pour tout $i in [| 1, abs(E) |]$,
   $ abs(E_i) = 2 $
   Par la première inégalité du théorème de Sperner
   $

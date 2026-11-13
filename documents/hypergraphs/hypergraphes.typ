@@ -10,9 +10,9 @@
   lang: "fr",
 
   // personal/subject related stuff
-  author: "Nathan TILLIER",
+  author: "Nathan Tillier",
   title: "Hypergraphes",
-  date: "Juillet 2025",
+  date: "Janvier 2026",
 
   // formatting settings
   body-font: font,

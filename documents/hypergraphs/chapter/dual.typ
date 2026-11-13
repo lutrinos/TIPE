@@ -11,7 +11,7 @@ Que se passe-t-il lorsqu'on prend un hypergraphe, puis que ses arêtes deviennen
   - les sommets sont les points $e_1, ..., e_m$ représentant respectivement $E_1, ..., E_m$
   - les arêtes sont les ensembles $X_1, ..., X_n$ représentant respectivement $x_1, ..., x_n$.
 
-  On a alors pour $j in bracket.l.double 1, n bracket.r.double$,
+  On a alors pour $j in [| 1, n |]$,
   $ X_j = { e_i | i <= m, x_j in E_i } $
 
   On appelle cet hypergraphe $H^*$ l'_hypergraphe dual_ de $H$.

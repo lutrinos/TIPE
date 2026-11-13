@@ -58,16 +58,16 @@ char** db_query_with_timings(DatabaseHandle db, const char *query_str,
 // Batch query execution - minimizes context switches
 // queries: array of query strings
 // num_queries: number of queries
-// results: output parameter for array of result pointers (allocated by function)
+// results: array of result pointers (allocated by function)
 // row_counts: array of row counts for each result
 // col_counts: array of column counts for each result
 // timings: array of timing info for each query
 // Returns 0 on success, -1 on error
 int db_batch_queries(DatabaseHandle db, const char **queries, size_t num_queries,
-                     char ****results, size_t *row_counts, size_t *col_counts,
+                     char ***results, size_t *row_counts, size_t *col_counts,
                      QueryTimings *timings);
 
 // Batch free for multiple results
-void db_batch_free_results(char ***results, size_t count);
+void db_batch_free_results(char **results, size_t count);
 
 #endif
